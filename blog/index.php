@@ -196,7 +196,7 @@
    foreach ($blog_creators as $blog_creator){
     if ($blog["blog_creator_id"] === $blog_creator["creator_id"]) {
       $author_name = "$blog_creator[first_name]";
-      $author_img = "$blog_creator[profile_photo_thumbnail_name]";
+      $author_img = "$blog_creator[profile_photo_thumbnail]";
     } 
   }
    echo("
