@@ -179,7 +179,7 @@
               <ul class='card-meta list-inline mb-2'>
                 <li class='list-inline-item mt-2'>
                   <a href='./author-single.php?author_id=".$blog_creator['creator_id']."' class='card-meta-author' title='Read all posts by - $blog_creator[first_name]'>
-                    <img class='w-auto' src='$blog_creator[profile_photo_thumbnail_name]' alt='$blog_creator[first_name]' width='26' height='26'> by <span>$blog_creator[first_name]</span>
+                    <img class='w-auto' src='$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name]' width='26' height='26'> by <span>$blog_creator[first_name]</span>
                   </a>
                 </li>
                 <li class='list-inline-item mt-2'>—</li>
@@ -231,10 +231,10 @@
           <div class='col-lg-10'>
             <div class='d-block d-md-flex'>
               <a href='./author-single.php?author_id=".$blog_creator['creator_id']."'>
-                <img class='rounded mr-4' src='$blog_creator[profile_photo_thumbnail_name]' alt='Thomas Macaulay' width='155' height='155'>
+                <img class='rounded mr-4' src='$blog_creator[profile_photo_thumbnail]' alt=$author_name width='155' height='155'>
               </a>
               <div class='ms-0 ms-md-4 ps-0 ps-md-3 mt-4 mt-md-0'>
-                <h3 class='h4 mb-3'><a href=c class='text-dark'>$author_name</a></h3>
+                <h3 class='h4 mb-3'><a href='./author-single.php?author_id=".$blog_creator['creator_id']."' class='text-dark'>$author_name</a></h3>
                 <p>$author_name is a writer based in New York City. He's interested in all things tech, science, and photography related, and likes to yo-yo in his free time. …</p>
                 <div class='content'><a href='./author-single.php?author_id=".$blog_creator['creator_id']."'>See all posts by this author <i class='ti ti-arrow-up-right'></i></a></div>
               </div>
