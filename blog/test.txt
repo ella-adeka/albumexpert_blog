@@ -553,4 +553,17 @@
   //   }
   // };
 
+
+$file_path= "../assets/images/uploaded_authors/";
+        $allowed_extensions = array("image/gif", "image/png", "image/jpg", "image/jpeg");
+        $path = $_FILES['profile_photo_thumbnail']['name'];
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
+        if (!in_array($path, $allowed_extensions)) {
+            $profile_photo_thumbnail_err = "Please upload in either .png, .gif, .jpg, or .jpeg format.";
+        } else {
+            move_uploaded_file($_FILES['profile_photo_thumbnail']['tmp_name'], $file_path.$_FILES['profile_photo_thumbnail']['name']);
+            $profile_photo_thumbnail = $file_path.$path;
+            // $profile_photo_thumbnail = $trim($_POST["profile_photo_thumbnail"]);
+        }
+        
 </body></html>
