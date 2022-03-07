@@ -170,20 +170,20 @@
         
         $author_full_name = $row['first_name']. " ".$row['last_name'];
 
-        foreach ($blogs as $blog) {
-          if ($blog["blog_creator_id"] == $row["creator_id"]) {
-            $blog_count = count($blog);
-          }
-        }
+        // foreach ($blogs as $blog) {
+        //   if ($blog["blog_creator_id"] == $row["creator_id"]) {
+        //     $blog_count = count($blog);
+        //   }
+        // }
 
         echo("
             <div class='col-lg-10'>
             <div class='row g-4 g-lg-5 text-center text-lg-start justify-content-center justify-content-lg-start'>
               <div class='col-lg-3 col-md-4 col-sm-5 col-6'>
-                <img class='img-fluid rounded' src=$row[profile_photo_thumbnail_name] alt=$author_full_name width='250' height='250'>
+                <img class='img-fluid rounded' src='assets/images/uploaded_authors/$row[profile_photo_thumbnail]' alt=$author_full_name width='250' height='250'>
               </div>
               <div class='col-lg-9 col-md-12'>
-                <p class='mb-2'><span class='fw-bold text-black'>$blog_count</span> Published posts</p>
+                <p class='mb-2'><span class='fw-bold text-black'>4</span> Published posts</p>
                 <h1 class='h3 text-dark mb-3'>$author_full_name</h1>
                 <div class='content'>
                   <p>$row[first_name] is a writer based in New York City. He&rsquo;s interested in all things tech, science, and photography related, and likes to yo-yo in his free time.</p>
@@ -209,7 +209,7 @@
         if ($blog["blog_creator_id"] === $row["creator_id"]) {
           $author_name = "$row[first_name] $row[last_name]";
           $author_first_name = "$row[first_name]";
-          $author_img = "$row[profile_photo_thumbnail_name]";
+          $author_img = "$row[profile_photo_thumbnail]";
 
           echo ("
             <div class='col-lg-6'>
