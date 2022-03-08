@@ -90,8 +90,6 @@
                 $profile_photo_thumbnail = uniqid("IMG-", true).'.'.$img_extension_lowercase;
                 $file_path= '../assets/images/uploaded_authors/'.$profile_photo_thumbnail;
                 move_uploaded_file($tmp_name, $file_path);
-
-
             } else {
                 $profile_photo_thumbnail_err = "Please upload in either .png, .gif, .jpg, or .jpeg format.";
             }
@@ -99,7 +97,7 @@
             $profile_photo_thumbnail_err = "Please upload a photo";
         }   
 
-        // Check input errors before inserting into the databaase
+        // Check input errors before inserting into the database
         if (empty($username_err) && empty($password_err) && empty($confirm_password_err) && empty($first_name_err) && empty($last_name_err) && empty($profile_photo_thumbnail_err)) {
             
             // Insert Statement
@@ -341,6 +339,10 @@
                 <button type='submit' class='btn btn-primary' aria-label='Register'>Register <i class='ti ti-brand-telegram ms-1'></i></button>
             </div>
         </form>
+
+        <div>
+          <p class="mt-4 content text-end">Have have an account yet? Then Just <a class="text-decoration-underline" href="blog_admin_login.php">Login Here</a></p>
+        </div>
       </div>
       
     </div>
