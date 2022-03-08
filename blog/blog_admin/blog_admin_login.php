@@ -289,6 +289,10 @@
                 <button type='submit' class='btn btn-primary' aria-label='Login'>Login <i class='ti ti-brand-telegram ms-1'></i></button>
             </div>
         </form>
+        
+        <div>
+          <p class="mt-4 content text-end">Don't have an account yet? <a class="text-decoration-underline" href="blog_admin_register.php">Register Here</a></p>
+        </div>
       </div>
       
     </div>
