@@ -5,7 +5,12 @@
   $result = mysqli_query($conn, $creator_query);
   $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-  include('includes/blog_db_skeleton.php');
+  $sql = "SELECT * from blogs";
+  $result = mysqli_query($conn, $sql);
+  $blogs = mysqli_fetch_all($result, MYSQLI_ASSOC);
+  
+ 
+  
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -177,13 +182,21 @@
           <?php
             foreach ($blog_creators as $blog_creator){
               $author_name = "$blog_creator[first_name] $blog_creator[last_name]";
-              
-              foreach ($blogs as $blog){
-                if ($blog["blog_creator_id"] === $blog_creator["creator_id"]) {
-                  $blog_count = count($blog);
+
+                foreach ($blogs as $blog) {
+                  if ($blog_creator['username'] === $blog_creator['username'] && $blog_creator["creator_id"] === $blog["blog_creator_id"]) {
+                    $author_id = $blog_creator['creator_id'];
+                    $blog_num = "SELECT * FROM blogs WHERE blog_creator_id = $author_id";
+                    if ($result_3=mysqli_query($conn, $blog_num)) {         
+                      $blog_count=mysqli_num_rows($result_3);
+                      $the_count = (($blog_count === 0) ? "no" : $blog_count);
+                    }
+                  }
                 }
-              }
-              echo("
+
+              
+              
+              echo ("
                 <div class='col-md-4 col-sm-6'>
                   <a class='d-inline-block is-hoverable' href='./author-single.php?author_id=".$blog_creator['creator_id']."'>
                     <img class='img-fluid rounded' src='./assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='150' height='150'>
@@ -543,4 +556,8 @@
 <!-- Main Script -->
 <script src="assets/js/script.js"></script>
 
+<?php  
+  mysqli_free_result($result);
+  mysqli_close($conn);
+?>
 </body></html>

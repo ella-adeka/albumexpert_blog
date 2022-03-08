@@ -6,6 +6,18 @@
   $creator_query = "SELECT * from blog_creators";
   $result = mysqli_query($conn, $creator_query);
   $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+  foreach ($blog_creators as $blog_creator) {
+    if ($_SESSION['username'] === $blog_creator['username']) {
+      $admin_id = $blog_creator['creator_id'];
+      $blog_num = "SELECT * FROM blogs WHERE blog_creator_id = $admin_id";
+      if ($result_2=mysqli_query($conn, $blog_num)) {         
+        $blog_count=mysqli_num_rows($result_2);
+      }
+    }
+  }
+
+  include('../includes/blog_db_skeleton.php');
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -151,27 +163,28 @@
   </div>
 </div>
 
-<section class="page-header section-sm">
+<!-- <section class="page-header section-sm">
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
-        <h1 class="section-title h2 mb-3">
-          <span>Write Your Own Blogs</span>
+        <h1 class="section-title h2 mb-1">
+          <span>Your Profile</span>
         </h1>
-        <ul class="list-inline breadcrumb-menu mb-3">
+        <ul class="list-inline breadcrumb-menu mb-1">
           <li class="list-inline-item"><a href="../index.php"><i class="ti ti-home"></i>  <span>Home</span></a></li>
-          <li class="list-inline-item">• &nbsp; <a href="blog_admin.php"><span>Write Blog</span></a></li>
+          <li class="list-inline-item">• &nbsp; <a href="blog_admin.php"><span>Profile</span></a></li>
         </ul>
       </div>
     </div>
   </div>
-</section>
+</section> -->
 
-<section>
+<section class='page-header section-sm'>
   <div class="container">
     <div class="row gy-5 justify-content-center">
 
       <?php
+          $the_count = (($blog_count == 0) ? "no" : $blog_count);
 
           if (isset($_SESSION['username'])) {
             foreach ($blog_creators as $blog_creator) {
@@ -194,11 +207,11 @@
             </div>
             <div class='row g-4 g-lg-5 text-center text-lg-start justify-content-center justify-content-lg-start'>
               <div class='col-lg-3 col-md-4 col-sm-5 col-6'>
-                <img class='img-fluid rounded' src='../assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt=$admin_name width='250' height='250'>
+                $admin_img
               </div>
               <div class='col-lg-9 col-md-12'>
                 <h1 class='h3 text-dark mb-1'>$_SESSION[username]</h1>
-                <p class='mb-2'>You have <span class='fw-bold text-black'>4</span> Published posts.</p>
+                <p class='mb-2'>You have <span class='fw-bold text-black'>$the_count</span> Published posts.</p>
                 <div class='content'>
                   <p>Full Name: <span class='fw-bold text-black'>$admin_name</span>.</p>
                   <p>Write your <a target='_blank' href='create_blog.php'>blog</a>.</p>
@@ -206,12 +219,104 @@
               </div>
             </div>
           </div>
-          
-          
          ");
-      ?>
-      
-      
+      ?>      
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="row"><div class="col-12"><hr class="bg-primary"></div></div>
+</div>
+
+
+<section class="section-sm pb-0">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h2 class="section-title">
+          <span>Your Recent posts</span>
+        </h2>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row gy-5 gx-4 g-xl-5">
+        <?php
+          
+          if ($blog_count == 0) {
+            echo ("
+              <div class='row'>
+                <div class='col-12 text-center'>
+                  <p>
+                    <span>You have no posts</span>
+                  </p>
+                </div>
+              </div>
+            ");
+          } else {
+            if (isset($_SESSION['username'])) {
+              foreach ($blog_creators as $blog_creator) {
+              foreach ($blogs as $blog) {
+                $newData = unserialize($blog['blog_content']);
+                $truncate = substr($newData['description'], 0, 255);
+                if ($_SESSION['username'] === $blog_creator['username'] && $blog["blog_creator_id"] === $blog_creator["creator_id"]) {
+                  // if () {
+                    $author_name = "$blog_creator[first_name] $blog_creator[last_name]";
+                    $author_first_name = "$blog_creator[first_name]";
+                    $author_img = "$blog_creator[profile_photo_thumbnail]";
+
+        
+                    echo ("
+                      <div class='col-lg-6'>
+                        <article class='card post-card h-100 border-0 bg-transparent'>
+                          <div class='card-body'>
+                            <a class='d-block'href='../blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'>
+                              <div class='post-image position-relative'>
+                                <img class='w-100 h-auto rounded' src='../assets/images/blog_images/".$newData['blogImage']."' alt='$newData[title]' width='970' height='500'>
+                              </div>
+                            </a>
+                            <ul class='card-meta list-inline mb-3'>
+                              <li class='list-inline-item mt-2'>
+                                <i class='ti ti-calendar-event'></i>
+                                <span>$blog[time_created]</span>
+                              </li>
+                              <li class='list-inline-item mt-2'>—</li>
+                              <li class='list-inline-item mt-2'>
+                                <i class='ti ti-clock'></i>
+                                <span>03 min read</span>
+                              </li>
+                            </ul>
+                            <a class='d-block' href='../blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'><h3 class='mb-3 post-title'>
+                            $newData[title]
+                            </h3></a>
+                            <p>$truncate ...</p>
+                          </div>
+                          <div class='card-footer border-top-0 bg-transparent p-0'>
+                            <ul class='card-meta list-inline'>
+                              <li class='list-inline-item mt-2'>
+                                <a href='../author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $blog[blog_creator_id]'>
+                                  <img class='w-auto' src='../assets/images/uploaded_authors/$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
+                                </a>
+                              </li>
+                              <li class='list-inline-item mt-2'>•</li>
+                              <li class='list-inline-item mt-2'>
+                                <ul class='card-meta-tag list-inline'>
+                                  <li class='list-inline-item small'><a href='tag-single.php'>Machine</a></li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </div>
+                        </article>
+                      </div>
+                    ");
+                  }
+                }
+              }
+            }
+          }
+          
+        ?>
+      </div>
     </div>
   </div>
 </section>
