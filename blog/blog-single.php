@@ -7,8 +7,6 @@
     $row = mysqli_fetch_assoc($res);
   }
   
-
-  
     // $creator_id= $_GET['creator_id'];
     $creator_query = "SELECT * from blog_creators WHERE creator_id = $row[blog_creator_id]";
     $result = mysqli_query($conn, $creator_query);
@@ -179,7 +177,7 @@
               <ul class='card-meta list-inline mb-2'>
                 <li class='list-inline-item mt-2'>
                   <a href='./author-single.php?author_id=".$blog_creator['creator_id']."' class='card-meta-author' title='Read all posts by - $blog_creator[first_name]'>
-                    <img class='w-auto' src='$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name]' width='26' height='26'> by <span>$blog_creator[first_name]</span>
+                    <img class='w-auto' src='assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name]' width='26' height='26'> by <span>$blog_creator[first_name]</span>
                   </a>
                 </li>
                 <li class='list-inline-item mt-2'>—</li>
@@ -197,7 +195,7 @@
         </div>
         <div class='col-lg-12'>
           <div class='mb-5 text-center'>
-            <img class='w-100 h-auto rounded' src='assets/images/blog/".$blog_content['blogImage']."' alt='$blog_content[title]' width='970' height='500'>
+            <img class='w-100 h-auto rounded' src='assets/images/blog_images/".$blog_content['blogImage']."' alt='$blog_content[title]' width='970' height='500'>
           </div>
         </div>
         <div class='col-lg-2 post-share-block order-1 order-lg-0 mt-5 mt-lg-0'>
@@ -231,7 +229,7 @@
           <div class='col-lg-10'>
             <div class='d-block d-md-flex'>
               <a href='./author-single.php?author_id=".$blog_creator['creator_id']."'>
-                <img class='rounded mr-4' src='$blog_creator[profile_photo_thumbnail]' alt=$author_name width='155' height='155'>
+                <img class='rounded mr-4' src='assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt=$author_name width='155' height='155'>
               </a>
               <div class='ms-0 ms-md-4 ps-0 ps-md-3 mt-4 mt-md-0'>
                 <h3 class='h4 mb-3'><a href='./author-single.php?author_id=".$blog_creator['creator_id']."' class='text-dark'>$author_name</a></h3>

@@ -232,7 +232,7 @@
           <div class='card-body'>
             <a class='d-block'href='./blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'>
               <div class='post-image position-relative'>
-                <img class='w-100 h-auto rounded' src='assets/images/blog/".$newData['blogImage']."' alt='$newData[title]' width='970' height='500'>
+                <img class='w-100 h-auto rounded' src='assets/images/blog_images/".$newData['blogImage']."' alt='$newData[title]' width='970' height='500'>
               </div>
             </a>
             <ul class='card-meta list-inline mb-3'>
@@ -255,7 +255,7 @@
             <ul class='card-meta list-inline'>
               <li class='list-inline-item mt-2'>
                 <a href='./author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $blog[blog_creator_id]'>
-                  <img class='w-auto' src='$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
+                  <img class='w-auto' src='assets/images/uploaded_authors/$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
                 </a>
               </li>
               <li class='list-inline-item mt-2'>•</li>
