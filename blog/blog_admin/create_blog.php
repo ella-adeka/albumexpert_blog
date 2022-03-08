@@ -1,5 +1,107 @@
 <?php
+  // start a new session
   session_start();
+
+  // If user is not logged, redirect to login page.
+  if (!isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == false) {
+    header ("location: blog_admin_login.php");
+    exit;
+  }  
+
+  // Add database file
+  require_once '../includes/database.php';
+  // require_once '../includes/blog_db_skeleton.php';
+
+  // Blog Creators query
+  $creator_query = "SELECT * from blog_creators";
+  $result = mysqli_query($conn, $creator_query);
+  $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+  // To count the blogs created by each admin
+  foreach ($blog_creators as $blog_creator) {
+    if ($_SESSION['username'] === $blog_creator['username']) {
+      $admin_id = $blog_creator['creator_id'];
+      $blog_num = "SELECT * FROM blogs WHERE blog_creator_id = $admin_id";
+      if ($result_2=mysqli_query($conn, $blog_num)) {         
+        $blog_count=mysqli_num_rows($result_2);
+      }
+    }
+  }
+
+  // Initialize variables
+  $title = $description = $blog_image = "";
+  $title_err = $description_err = $blog_image_err = "";
+
+  // Procession the form data on submit
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+    // Validate title
+    if (empty(trim($_POST["title"]))) {
+      $title_err = "Please enter a title";
+    } else {
+      $title = trim($_POST["title"]);
+    }
+
+    // Validate description
+    if (empty(trim($_POST["description"]))) {
+      $description_err = "Please enter a description";
+    } else {
+      $description = trim($_POST["description"]);
+    }
+
+    // Validate image
+    if (isset($_FILES["blog_image"])) {
+      $blog_img_name = $_FILES['blog_image']['name'];
+      $blog_img_tmp_name = $_FILES['blog_image']['tmp_name'];
+      $img_extension = pathinfo($blog_img_name, PATHINFO_EXTENSION);
+      $img_extension_lowercase = strtolower($img_extension);
+
+      $allowed_extensions = array("gif", "png", "jpg", "jpeg");
+      if (in_array($img_extension_lowercase, $allowed_extensions)) {
+        $blog_image = uniqid("IMG-", true).'.'.$img_extension_lowercase;
+        $file_path = '../assets/images/blog_images/'.$blog_image;
+        move_uploaded_file($blog_img_tmp_name, $file_path);
+      } else {
+        $blog_image_err = "Please upload an image in either .png, .gif, .jpg, or .jpeg";
+      }
+      
+    } else {
+      $blog_image_err = "Please upload a photo";
+    }
+    
+    // Check input erors brfore inserting into the database
+    if (empty($title_err) && empty($description_err) && empty($blog_image_err)) {
+
+      $date = date("Y-m-d");
+      $article = array('title'=> $title, 'description'=>$description, 'blogImage'=>$blog_image);
+      // if (is_array($article)) {
+      $data = serialize($article);
+        
+      // Insert serialize data into row
+      $sql = "INSERT INTO blogs (blog_creator_id, time_created, blog_content) VALUES ($admin_id, $date, ?)";
+      
+
+      if ($stmt = mysqli_prepare($conn, $sql)) {
+        
+        mysqli_stmt_bind_param($stmt, "s", $param_data);
+
+        // Set parameters
+        $param_data = $data;
+
+        // Attempt to execute the prepared statement
+        if (mysqli_stmt_execute($stmt)) {
+          // Redirect to blog page
+          header("location: ../blog.php");
+        } else {
+          echo ("Something went wong. Please try again later.");
+        }
+        
+        // Close statement
+        mysqli_stmt_close($stmt);
+      }
+    }
+    
+  }
 
   
 ?>
@@ -167,47 +269,51 @@
   <div class="container">
     <div class="row gy-5 justify-content-center">
       
-      <div class="col-lg-5 col-md-10 ms-lg-auto me-lg-0 me-auto">
+      <div class="col-lg-4 col-md-10 ms-lg-auto me-lg-0 me-auto">
         <div class="mb-5">
-          <h2 class="h3 mb-3">Your Profile</h2>
-          <p class="mb-0">Name: </p>
-          <p class="mb-0">Username: </p>
-        </div>
-        <div>
-          <h2 class="h4 mb-3">Hate forms? <br> Write an email or make a call</h2>
-          <p class="mb-2 content">
-            <i class="ti ti-mail-forward me-2 d-inline-block mb-0" style="transform:translateY(2px)"></i> <a href="mailto:contact@qurno.com">contact@qurno.com</a></p>
-          <p class="mb-0 content"><i class="ti ti-phone me-2"></i> +98 02 296 4902</p>
+          <?php
+            if (isset($_SESSION['username'])) {
+              foreach ($blog_creators as $blog_creator) {
+                if ($_SESSION['username'] == $blog_creator['username']) {
+                  $admin_img = "<img class='img-fluid rounded mb-4' src='../assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='250' height='250'>";
+                  $admin_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
+                }
+              }
+            }
+            echo ("
+              <h2 class='h3 mb-3'>Your Profile</h2>
+              $admin_img
+              <p class='mb-0'>Username: <span class='fw-bold text-bold'> $_SESSION[username]</span></p>
+              <p class='mb-0'>Name:<span class='fw-bold text-bold'> $admin_name </span></p>
+              <p class='mb-0'>Blogs Created:<span class='fw-bold text-bold'> $blog_count </span></p>
+            ");
+          ?>
         </div>
       </div>
       
-      <div class="col-lg-5 me-lg-auto ms-lg-0 ms-auto">
+      <div class="col-lg-8 me-lg-auto ms-lg-0 ms-auto">
         <h2 class="h3 mb-4">Create Your Blog</h2>
 
-        <form id="create_form_blog" class="row g-4" action=<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?> method="post">
-          <?php
-            echo("
-              <div class='col-md-12'>
-                <input type='text' class='form-control' placeholder='Title' name='title' required>
-              </div>
-              <div class='col-md-12'>
-                <textarea class='form-control' placeholder='Description' rows='4' name='description' required></textarea>
-              </div>
-              <div class='col-md-12'>
-                <select name='Tags' id='tag'>
-                    <option value=''>Choose Tags</option>
-                    <option value='Machine'>Machine</option>
-                    <option value='Life'>Life</option>
-                </select>
-              </div>
-              <div class='col-md-12'>
-                <input type='file' name='image' id='image' required>
-              </div>
-              <div class='col-12'>
-                <button type='submit' class='btn btn-primary' aria-label='Post Blog'>Post <i class='ti ti-brand-telegram ms-1'></i></button>
-              </div>
-            ");
-          ?>
+        <form id="create_form_blog" class="row g-4" action=<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?> method="post" enctype="multipart/form-data">
+          <div class='col-md-12'>
+            <input type='text' class='form-control' placeholder='Title' name='title' required>
+          </div>
+          <div class='col-md-12'>
+            <textarea class='form-control' placeholder='Description' rows='4' name='description' required></textarea>
+          </div>
+          <!-- <div class='col-md-12'>
+            <select name='Tags' id='tag'>
+                <option value=''>Choose Tags</option>
+                <option value='Machine'>Machine</option>
+                <option value='Life'>Life</option>
+            </select>
+          </div> -->
+          <div class='col-md-12'>
+            <input type='file' name='blog_image' id='blog_image' required>
+          </div>
+          <div class='col-12'>
+            <button type='submit' class='btn btn-primary' aria-label='Post Blog'>Post <i class='ti ti-brand-telegram ms-1'></i></button>
+          </div>
         </form>
       </div>
       
