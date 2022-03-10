@@ -1,39 +1,39 @@
 <?php 
   include('includes/database.php');
-    $date = date("Y-m-j");
+    // $date = date("Y-m-j");
 
-    $title1 = 'The AGI hype train is running out of steam';
-    $description1 = 'The AGI hype train has hit some heavy traffic. While futurists and fundraisers used to make bullish predictions about artificial general intelligence,';
-    $blogImage1 = '01.jpg';
+    // $title1 = 'The AGI hype train is running out of steam';
+    // $description1 = 'The AGI hype train has hit some heavy traffic. While futurists and fundraisers used to make bullish predictions about artificial general intelligence,';
+    // $blogImage1 = '01.jpg';
 
 
-    $title2 = 'Creating an object that travels at 1% the speed of light?';
-    $description2 = 'Light is fast. In fact, it is the fastest thing that exists, and a law of the universe is that nothing can move faster than light. Light travels at,';
-    $blogImage2 = '02.jpg';
+    // $title2 = 'Creating an object that travels at 1% the speed of light?';
+    // $description2 = 'Light is fast. In fact, it is the fastest thing that exists, and a law of the universe is that nothing can move faster than light. Light travels at,';
+    // $blogImage2 = '02.jpg';
 
-    $title3 = 'Everything you wanted to know about the metaverse';
-    $description3 = 'In the wake of Facebook rebranding as Meta, reflecting its focus on the “metaverse”, Microsoft has now announced it, too, will launch into this space.';
-    $blogImage3 = '03.jpg';
+    // $title3 = 'Everything you wanted to know about the metaverse';
+    // $description3 = 'In the wake of Facebook rebranding as Meta, reflecting its focus on the “metaverse”, Microsoft has now announced it, too, will launch into this space.';
+    // $blogImage3 = '03.jpg';
 
-    $title4 = 'How to hire a developer straight out of bootcamp — without getting burned';
-    $description4 = 'There’s a worldwide talent shortage in software development, and nearly one-third of hiring managers have hired someone from a coding bootcamp to help.';
-    $blogImage4 = '07.jpg';
+    // $title4 = 'How to hire a developer straight out of bootcamp — without getting burned';
+    // $description4 = 'There’s a worldwide talent shortage in software development, and nearly one-third of hiring managers have hired someone from a coding bootcamp to help.';
+    // $blogImage4 = '07.jpg';
 
-    $articles = array(
-      array('title'=>$title1, 'description'=>$description1,'blogImage'=>$blogImage1),
-      array('title'=>$title2, 'description'=>$description2,'blogImage'=>$blogImage2),
-      array('title'=>$title3, 'description'=>$description3,'blogImage'=>$blogImage3),
-      array('title'=>$title4, 'description'=>$description4,'blogImage'=>$blogImage4),
-    );
+    // $articles = array(
+    //   array('title'=>$title1, 'description'=>$description1,'blogImage'=>$blogImage1),
+    //   array('title'=>$title2, 'description'=>$description2,'blogImage'=>$blogImage2),
+    //   array('title'=>$title3, 'description'=>$description3,'blogImage'=>$blogImage3),
+    //   array('title'=>$title4, 'description'=>$description4,'blogImage'=>$blogImage4),
+    // );
     
-    if (is_array($articles)){
-      foreach ($articles as $article){
-        global $newData;
-        $data = serialize($article);
-        $sql = "INSERT INTO blogs (time_created, blog_content) VALUES ('$date','$data')";
-        // mysqli_query($conn, $sql);        
-      }
-    }
+    // if (is_array($articles)){
+    //   foreach ($articles as $article){
+    //     global $newData;
+    //     $data = serialize($article);
+    //     $sql = "INSERT INTO blogs (time_created, blog_content) VALUES ('$date','$data')";
+    //     // mysqli_query($conn, $sql);        
+    //   }
+    // }
 
     $creator_query = "SELECT * from blog_creators";
     $result = mysqli_query($conn, $creator_query);
@@ -207,95 +207,104 @@
 </section>
 
 <?php   
-  echo("
-    <div class='container'>
-      <div class='row gy-5 gx-4 g-xl-5'>
-      
-  ");
-    
-  foreach ($blogs as $blog){
-    
-    $newData = unserialize($blog['blog_content']);
-
-    $truncate = substr($newData['description'], 0, 255);
-
-    foreach ($blog_creators as $blog_creator){
-      if ($blog["blog_creator_id"] === $blog_creator["creator_id"]) {
-        $author_name = "$blog_creator[first_name] $blog_creator[last_name]";
-        $author_first_name = "$blog_creator[first_name]";
-        $author_img = "$blog_creator[profile_photo_thumbnail]";
-      } 
-    }
-    echo("
-      <div class='col-lg-6'>
-        <article class='card post-card h-100 border-0 bg-transparent'>
-          <div class='card-body'>
-            <a class='d-block'href='./blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'>
-              <div class='post-image position-relative'>
-                <img class='w-100 h-auto rounded' src='assets/images/blog_images/".$newData['blogImage']."' alt='$newData[title]' width='970' height='500'>
-              </div>
-            </a>
-            <ul class='card-meta list-inline mb-3'>
-              <li class='list-inline-item mt-2'>
-                <i class='ti ti-calendar-event'></i>
-                <span>$blog[time_created]</span>
-              </li>
-              <li class='list-inline-item mt-2'>—</li>
-              <li class='list-inline-item mt-2'>
-                <i class='ti ti-clock'></i>
-                <span>03 min read</span>
-              </li>
-            </ul>
-            <a class='d-block' href='./blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'><h3 class='mb-3 post-title'>
-            $newData[title]
-            </h3></a>
-            <p>$truncate ...</p>
-          </div>
-          <div class='card-footer border-top-0 bg-transparent p-0'>
-            <ul class='card-meta list-inline'>
-              <li class='list-inline-item mt-2'>
-                <a href='./author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $blog[blog_creator_id]'>
-                  <img class='w-auto' src='assets/images/uploaded_authors/$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
-                </a>
-              </li>
-              <li class='list-inline-item mt-2'>•</li>
-              <li class='list-inline-item mt-2'>
-                <ul class='card-meta-tag list-inline'>
-                  <li class='list-inline-item small'><a href='tag-single.php'>Machine</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </article>
-    </div>
+  if (empty($blogs)) {
+    echo ("
+      <div class='row'>
+        <div class='col-12 text-center'>
+          <p>
+            <span class='fs-3'>No blogs have been written yet :(</span>
+          </p>
+        </div>
+      </div>
     ");
-    // 
-  }
+  } else {
+      echo("
+      <div class='container'>
+        <div class='row gy-5 gx-4 g-xl-5'>
+        
+    ");
+      
+    foreach ($blogs as $blog){
+      
+      $newData = unserialize($blog['blog_content']);
 
+      $truncate = substr($newData['description'], 0, 255);
 
+      foreach ($blog_creators as $blog_creator){
+        if ($blog["blog_creator_id"] === $blog_creator["creator_id"]) {
+          $author_name = "$blog_creator[first_name] $blog_creator[last_name]";
+          $author_first_name = "$blog_creator[first_name]";
+          $author_img = "$blog_creator[profile_photo_thumbnail]";
+        } 
+      }
+      echo("
+        <div class='col-lg-6'>
+          <article class='card post-card h-100 border-0 bg-transparent'>
+            <div class='card-body'>
+              <a class='d-block'href='./blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'>
+                <div class='post-image position-relative'>
+                  <img class='w-100 h-auto rounded' src='assets/images/blog_images/".$newData['blogImage']."' alt='$newData[title]' width='970' height='500'>
+                </div>
+              </a>
+              <ul class='card-meta list-inline mb-3'>
+                <li class='list-inline-item mt-2'>
+                  <i class='ti ti-calendar-event'></i>
+                  <span>$blog[time_created]</span>
+                </li>
+                <li class='list-inline-item mt-2'>—</li>
+                <li class='list-inline-item mt-2'>
+                  <i class='ti ti-clock'></i>
+                  <span>03 min read</span>
+                </li>
+              </ul>
+              <a class='d-block' href='./blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'><h3 class='mb-3 post-title'>
+              $newData[title]
+              </h3></a>
+              <p>$truncate ...</p>
+            </div>
+            <div class='card-footer border-top-0 bg-transparent p-0'>
+              <ul class='card-meta list-inline'>
+                <li class='list-inline-item mt-2'>
+                  <a href='./author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $blog[blog_creator_id]'>
+                    <img class='w-auto' src='assets/images/uploaded_authors/$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
+                  </a>
+                </li>
+                <li class='list-inline-item mt-2'>•</li>
+                <li class='list-inline-item mt-2'>
+                  <ul class='card-meta-tag list-inline'>
+                    <li class='list-inline-item small'><a href='tag-single.php'>Machine</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </article>
+      </div>
+      ");
+      // 
+    }
 
-  echo("
-  
-      <div class='col-12'>
-        <!-- pagination -->
-        <nav class='text-center mt-5'>
-          <ul class='pagination justify-content-center border border-white rounded d-inline-flex'>
-            <li class='page-item'><a class='page-link rounded w-auto px-4' href='blog.html' aria-label='Pagination Arrow'>Prev</a></li>
-            <li class='page-item active '>
-              <a href='blog.php' class='page-link rounded'>1</a>
-            </li>
-            <li class='page-item'>
-              <a href='blog.php' class='page-link rounded'>2</a>
-            </li>
-            <li class='page-item mt-2 mx-2'>...</li>
-            <li class='page-item'><a class='page-link rounded' href='blog.html' aria-label='Pagination Arrow'>16</a></li>
-            <li class='page-item'><a class='page-link rounded w-auto px-4' href='blog.html' aria-label='Pagination Arrow'>Next</a></li>
-          </ul>
-        </nav>
+    echo("
+        <div class='col-12'>
+          <!-- pagination -->
+          <nav class='text-center mt-5'>
+            <ul class='pagination justify-content-center border border-white rounded d-inline-flex'>
+              <li class='page-item'><a class='page-link rounded w-auto px-4' href='blog.html' aria-label='Pagination Arrow'>Prev</a></li>
+              <li class='page-item active '>
+                <a href='blog.php' class='page-link rounded'>1</a>
+              </li>
+              <li class='page-item'>
+                <a href='blog.php' class='page-link rounded'>2</a>
+              </li>
+              <li class='page-item mt-2 mx-2'>...</li>
+              <li class='page-item'><a class='page-link rounded' href='blog.html' aria-label='Pagination Arrow'>16</a></li>
+              <li class='page-item'><a class='page-link rounded w-auto px-4' href='blog.html' aria-label='Pagination Arrow'>Next</a></li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
-  </div>
-  ");
+    ");
+  }
 ?>
 
 <!-- start of footer -->
