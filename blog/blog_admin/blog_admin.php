@@ -1,23 +1,14 @@
 <?php
-  session_start();
+    require_once "../includes/database.php";
+    $creator_query = "SELECT * from blog_creators";
+    $result = mysqli_query($conn, $creator_query);
+    $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-  require_once '../includes/database.php';
+    // Activate and deactivate
 
-  $creator_query = "SELECT * from blog_creators";
-  $result = mysqli_query($conn, $creator_query);
-  $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    // Delete
 
-  foreach ($blog_creators as $blog_creator) {
-    if ($_SESSION['username'] === $blog_creator['username']) {
-      $admin_id = $blog_creator['creator_id'];
-      $blog_num = "SELECT * FROM blogs WHERE blog_creator_id = $admin_id";
-      if ($result_2=mysqli_query($conn, $blog_num)) {         
-        $blog_count=mysqli_num_rows($result_2);
-      }
-    }
-  }
-
-  include('../includes/blog_db_skeleton.php');
+    
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -36,6 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crete+Round&family=Work+Sans:wght@500;600&display=swap" rel="stylesheet">
+
 
   <link rel="stylesheet" href="../plugins/bootstrap/bootstrap.min.css">
   <link rel="stylesheet" href="../plugins/tabler-icons/tabler-icons.min.css">
@@ -163,159 +155,91 @@
   </div>
 </div>
 
-<!-- <section class="page-header section-sm">
+<section class="page-header section-sm">
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
         <h1 class="section-title h2 mb-1">
-          <span>Your Profile</span>
+          <span>Blog Admin</span>
         </h1>
         <ul class="list-inline breadcrumb-menu mb-1">
           <li class="list-inline-item"><a href="../index.php"><i class="ti ti-home"></i>  <span>Home</span></a></li>
-          <li class="list-inline-item">• &nbsp; <a href="blog_admin.php"><span>Profile</span></a></li>
+          <li class="list-inline-item">• &nbsp; <a href="blog_admin.php"><span>Admin</span></a></li>
         </ul>
       </div>
     </div>
   </div>
-</section> -->
-
-<section class='page-header section-sm'>
-  <div class="container">
-    <div class="row gy-5 justify-content-center">
-
-      <?php
-          $the_count = (($blog_count == 0) ? "no" : $blog_count);
-
-          if (isset($_SESSION['username'])) {
-            foreach ($blog_creators as $blog_creator) {
-              if ($_SESSION['username'] === $blog_creator['username']) {
-                $admin_img = "<img class='img-fluid rounded' src='../assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='300' height='300'>";
-                $admin_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
-              }
-            }
-          } 
-
-         echo ("
-         <div class='col-lg-10'>
-            <div class='row g-4 g-lg-5 text-center text-lg-start justify-content-center justify-content-lg-start mb-4'>
-                <div class='col-lg-3 col-md-6 col-sm-6 '>
-                  <p class='text-center text-sm-start text-lg-start text-decoration-underline'><a href='blog_admin_logout.php'>Edit Your Profile</a></p>
-                </div>
-                <div class='col-lg-9 col-md-6 col-sm-6 '>
-                  <p class='text-center text-sm-end text-lg-end text-decoration-underline'><a href='blog_admin_logout.php'>Logout</a></p>
-                </div>
-            </div>
-            <div class='row g-4 g-lg-5 text-center text-lg-start justify-content-center justify-content-lg-start'>
-              <div class='col-lg-3 col-md-4 col-sm-5 col-6'>
-                $admin_img
-              </div>
-              <div class='col-lg-9 col-md-12'>
-                <h1 class='h3 text-dark mb-1'>$_SESSION[username]</h1>
-                <p class='mb-2'>You have <span class='fw-bold text-black'>$the_count</span> Published posts.</p>
-                <div class='content'>
-                  <p>Full Name: <span class='fw-bold text-black'>$admin_name</span>.</p>
-                  <p>Write your <a target='_blank' href='create_blog.php'>blog</a>.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-         ");
-      ?>      
-    </div>
-  </div>
 </section>
 
-<div class="container">
-  <div class="row"><div class="col-12"><hr class="bg-primary"></div></div>
-</div>
-
-
-<section class="section-sm pb-0">
+<section class='page-header mt-3'>
   <div class="container">
-    <div class="row">
-      <div class="col-12 text-center">
-        <h2 class="section-title">
-          <span>Your Recent posts</span>
-        </h2>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row gy-5 gx-4 g-xl-5">
-        <?php
+    <div class="row gy-5 justify-content-center">
+      <?php
+        if (!empty($blog_creators)) {
+          echo ("
+            <table class='table table-hover'>
+              <thead class='thead-dark'>
+                  <tr>
+                      <th scope='col'>S/N</th>
+                      <th scope='col'>Creator Name</th>
+                      <th scope='col'>Creator Username</th>
+                      <th scope='col'>Activate/Deactivate</th>
+                      <th scope='col'>Delete</th>
+                  </tr>
+              </thead>
+              <tbody>
+          ");
+                  
+          $creator = 1;
+          $isActive = true;
+          foreach ($blog_creators as $blog_creator) {
+            $full_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
+            $ActiveOrNot = ((!$isActive) ? "<i class='fa-solid fa-xmark icon'></i>" : "<i class='fa-solid fa-check icon'></i>");
+
+            echo("
+              <tr>
+                <th scope='row'>".$creator++."</th>
+                <td>$blog_creator[first_name]</td>
+                <td>$full_name</td>
+                <td class='tickBtn'>$ActiveOrNot</td>
+                <td><a class='delete' href='delete_creator.php?creator_id=$blog_creator[creator_id]'><i class='fa-solid fa-trash'></i></a></td>
+              </tr>
+            ");
+          }
           
-          if ($blog_count == 0) {
-            echo ("
+          echo ("
+              </tbody>
+            </table>
+            <p>Blog Creator is active = <i class='fa-solid fa-check fs-3'></i> <br> Blog Creator is not active = <i class='fa-solid fa-xmark fs-3'></i></p>
+          ");
+        } else {
+          echo ("
               <div class='row'>
                 <div class='col-12 text-center'>
                   <p>
-                    <span>You have no posts</span>
+                    <span class=fs-2>No one has registered yet :(</span>
                   </p>
                 </div>
               </div>
             ");
-          } else {
-            if (isset($_SESSION['username'])) {
-              foreach ($blog_creators as $blog_creator) {
-              foreach ($blogs as $blog) {
-                $newData = unserialize($blog['blog_content']);
-                $truncate = substr($newData['description'], 0, 255);
-                if ($_SESSION['username'] === $blog_creator['username'] && $blog["blog_creator_id"] === $blog_creator["creator_id"]) {
-                  // if () {
-                    $author_name = "$blog_creator[first_name] $blog_creator[last_name]";
-                    $author_first_name = "$blog_creator[first_name]";
-                    $author_img = "$blog_creator[profile_photo_thumbnail]";
-
+        }
         
-                    echo ("
-                      <div class='col-lg-6'>
-                        <article class='card post-card h-100 border-0 bg-transparent'>
-                          <div class='card-body'>
-                            <a class='d-block'href='../blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'>
-                              <div class='post-image position-relative'>
-                                <img class='w-100 h-auto rounded' src='../assets/images/blog_images/".$newData['blogImage']."' alt='$newData[title]' width='970' height='500'>
-                              </div>
-                            </a>
-                            <ul class='card-meta list-inline mb-3'>
-                              <li class='list-inline-item mt-2'>
-                                <i class='ti ti-calendar-event'></i>
-                                <span>$blog[time_created]</span>
-                              </li>
-                              <li class='list-inline-item mt-2'>—</li>
-                              <li class='list-inline-item mt-2'>
-                                <i class='ti ti-clock'></i>
-                                <span>03 min read</span>
-                              </li>
-                            </ul>
-                            <a class='d-block' href='../blog-single.php?blog_id=".$blog['blog_id']."' title='$newData[title]'><h3 class='mb-3 post-title'>
-                            $newData[title]
-                            </h3></a>
-                            <p>$truncate ...</p>
-                          </div>
-                          <div class='card-footer border-top-0 bg-transparent p-0'>
-                            <ul class='card-meta list-inline'>
-                              <li class='list-inline-item mt-2'>
-                                <a href='../author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $blog[blog_creator_id]'>
-                                  <img class='w-auto' src='../assets/images/uploaded_authors/$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
-                                </a>
-                              </li>
-                              <li class='list-inline-item mt-2'>•</li>
-                              <li class='list-inline-item mt-2'>
-                                <ul class='card-meta-tag list-inline'>
-                                  <li class='list-inline-item small'><a href='tag-single.php'>Machine</a></li>
-                                </ul>
-                              </li>
-                            </ul>
-                          </div>
-                        </article>
-                      </div>
-                    ");
-                  }
-                }
-              }
-            }
-          }
-          
-        ?>
+            
+      ?>
+    </div>
+  </div>
+</section>
+
+<div class="container section-sm">
+  <div class="row"><div class="col-12"></div></div>
+</div>
+
+
+<section class="section-sm">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        
       </div>
     </div>
   </div>
@@ -324,24 +248,8 @@
 <!-- start of footer -->
 <footer>
   <div class="container">
-    <div class="section">
-      <div class="row justify-content-center align-items-center">
-        <div class="col-xl-6 col-lg-8 col-md-10">
-          <!-- newsletter block -->
-          <div class="newsletter-block">
-            <h2 class="section-title text-center mb-4">Get latest posts delivered right to your inbox</h2>
-            <form action="#!" method="post" novalidate>
-              <div class="input-group flex-column flex-sm-row flex-nowrap flex-sm-nowrap">
-                <input type="email" name="email" class="form-control required email w-auto text-center text-sm-start" placeholder="Your email address" aria-label="Subscription" required>
-                <div class="input-group-append d-flex d-sm-inline-block mt-2 mt-sm-0 ms-0 w-auto">
-                  <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="input-group-text w-100 justify-content-center" aria-label="Subscription Button"><i class="ti ti-user-plus me-2"></i> Join today</button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <!-- newsletter block -->
-        </div>
-      </div>
+    <div >
+      
     </div>
     <div class="pb-5">
       <div class="row g-2 g-lg-4 align-items-center">
@@ -367,5 +275,8 @@
 
 <!-- Main Script -->
 <script src="../assets/js/script.js"></script>
+<script src="../assets/js/untick.js"></script>
+<script src="https://kit.fontawesome.com/58fb59c662.js" crossorigin="anonymous"></script>
+
 
 </body></html>
