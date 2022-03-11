@@ -8,6 +8,7 @@
         exit;
     }
 
+
     // Include database file
     require_once '../includes/database.php';
 
@@ -35,7 +36,7 @@
         // Validate credentials
         if (empty($username_err) && empty($password_err)) {
             // SELECT statement
-            $sql = "SELECT creator_id, username, password FROM blog_creators WHERE username = ?";
+            $sql = "SELECT creator_id, username, password, active_or_inactive FROM blog_creators WHERE username = ?";
 
             if ($stmt = mysqli_prepare($conn, $sql)) {
                 // Bind variables to the prepared statemnt
@@ -52,7 +53,7 @@
                     // Check if username exists, if yes then verify password
                     if (mysqli_stmt_num_rows($stmt) == 1) {
                         // Bind result variables
-                        mysqli_stmt_bind_result($stmt, $creator_id, $username, $hashed_password);
+                        mysqli_stmt_bind_result($stmt, $creator_id, $username, $hashed_password, $active_or_inactive);
 
                         if (mysqli_stmt_fetch($stmt)) {
                             if (password_verify($password, $hashed_password)) {
@@ -63,9 +64,23 @@
                                 $_SESSION["loggedin"] = true;
                                 $_SESSION["creator_id"] = $creator_id;
                                 $_SESSION["username"] = $username;
+                                // $_SESSION["active_or_inactive"] = $active_or_inactive;
+                                
+                                // if ($_SESSION["active_or_inactive"] == 1) {
+                                if ($active_or_inactive == 1) {
+                                  // Redirect to blog admin page
+                                  header('Location: blog_creator.php');
+                                } else {
+                                  // Remove all the session variables;
+                                  session_unset();
 
-                                // Redirect to blog admin page
-                                header('Location: blog_creator.php');
+                                  // Destroy the session
+                                  session_destroy();
+
+                                  // Redirect to deactivated page
+                                  header('Location: blog_creator_deactivated.php');
+                                }
+                                
                             } else {
                                 // Password is not valid display an error message
                                 $login_err = "Invalid username or password.";
@@ -241,7 +256,7 @@
         <h1 class="section-title h2 mb-3">
           <span>Login to your Account</span>
         </h1>
-        <ul class="list-inline breadcrumb-menu mb-3">
+        <ul class="list-inline breadcrumb-menu mb-0">
           <li class="list-inline-item"><a href="../index.php"><i class="ti ti-home"></i>  <span>Home</span></a></li>
           <li class="list-inline-item">• &nbsp; <a href="blog_creator_login.php"><span>Login</span></a></li>
         </ul>
@@ -302,26 +317,8 @@
 <!-- start of footer -->
 <footer>
   <div class="container">
-    <div class="section">
-      <div class="row justify-content-center align-items-center">
-        <div class="col-xl-6 col-lg-8 col-md-10">
-          <!-- newsletter block -->
-          <div class="newsletter-block">
-            <h2 class="section-title text-center mb-4">Get latest posts delivered right to your inbox</h2>
-            <form action="#!" method="post" novalidate>
-              <div class="input-group flex-column flex-sm-row flex-nowrap flex-sm-nowrap">
-                <input type="email" name="email" class="form-control required email w-auto text-center text-sm-start" placeholder="Your email address" aria-label="Subscription" required>
-                <div class="input-group-append d-flex d-sm-inline-block mt-2 mt-sm-0 ms-0 w-auto">
-                  <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="input-group-text w-100 justify-content-center" aria-label="Subscription Button"><i class="ti ti-user-plus me-2"></i> Join today</button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <!-- newsletter block -->
-        </div>
-      </div>
-    </div>
-    <div class="pb-5">
+    <div class="pt-3"></div>
+    <div class="pt-5">
       <div class="row g-2 g-lg-4 align-items-center">
         <div class="col-lg-6 text-center text-lg-start">
           <p class="mb-0 copyright-text content">&copy;2022 Qurno. All rights reserved.</p>
