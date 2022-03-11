@@ -567,3 +567,38 @@ $file_path= "../assets/images/uploaded_authors/";
         }
         
 </body></html>
+
+    // $date = date("Y-m-j");
+
+    // $title1 = 'The AGI hype train is running out of steam';
+    // $description1 = 'The AGI hype train has hit some heavy traffic. While futurists and fundraisers used to make bullish predictions about artificial general intelligence,';
+    // $blogImage1 = '01.jpg';
+
+
+    // $title2 = 'Creating an object that travels at 1% the speed of light?';
+    // $description2 = 'Light is fast. In fact, it is the fastest thing that exists, and a law of the universe is that nothing can move faster than light. Light travels at,';
+    // $blogImage2 = '02.jpg';
+
+    // $title3 = 'Everything you wanted to know about the metaverse';
+    // $description3 = 'In the wake of Facebook rebranding as Meta, reflecting its focus on the “metaverse”, Microsoft has now announced it, too, will launch into this space.';
+    // $blogImage3 = '03.jpg';
+
+    // $title4 = 'How to hire a developer straight out of bootcamp — without getting burned';
+    // $description4 = 'There’s a worldwide talent shortage in software development, and nearly one-third of hiring managers have hired someone from a coding bootcamp to help.';
+    // $blogImage4 = '07.jpg';
+
+    // $articles = array(
+    //   array('title'=>$title1, 'description'=>$description1,'blogImage'=>$blogImage1),
+    //   array('title'=>$title2, 'description'=>$description2,'blogImage'=>$blogImage2),
+    //   array('title'=>$title3, 'description'=>$description3,'blogImage'=>$blogImage3),
+    //   array('title'=>$title4, 'description'=>$description4,'blogImage'=>$blogImage4),
+    // );
+    
+    // if (is_array($articles)){
+    //   foreach ($articles as $article){
+    //     global $newData;
+    //     $data = serialize($article);
+    //     $sql = "INSERT INTO blogs (time_created, blog_content) VALUES ('$date','$data')";
+    //     // mysqli_query($conn, $sql);        
+    //   }
+    // }
