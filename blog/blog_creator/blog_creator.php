@@ -8,7 +8,6 @@
 
   require_once '../includes/database.php';
 
-
   $creator_query = "SELECT * from blog_creators";
   $result = mysqli_query($conn, $creator_query);
   $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -42,6 +41,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crete+Round&family=Work+Sans:wght@500;600&display=swap" rel="stylesheet">
+
 
   <link rel="stylesheet" href="../plugins/bootstrap/bootstrap.min.css">
   <link rel="stylesheet" href="../plugins/tabler-icons/tabler-icons.min.css">
@@ -241,7 +241,7 @@
     <div class="row">
       <div class="col-12 text-center">
         <h2 class="section-title">
-          <span>Your Recent posts</span>
+          <span>Your Blog Posts</span>
         </h2>
       </div>
     </div>
@@ -254,7 +254,7 @@
               <div class='row'>
                 <div class='col-12 text-center'>
                   <p>
-                    <span>You have no posts</span>
+                    <span>You have no posts :(</span>
                   </p>
                 </div>
               </div>
@@ -299,17 +299,29 @@
                           </div>
                           <div class='card-footer border-top-0 bg-transparent p-0'>
                             <ul class='card-meta list-inline'>
-                              <li class='list-inline-item mt-2'>
-                                <a href='../author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $blog[blog_creator_id]'>
-                                  <img class='w-auto' src='../assets/images/uploaded_authors/$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
-                                </a>
-                              </li>
-                              <li class='list-inline-item mt-2'>•</li>
-                              <li class='list-inline-item mt-2'>
-                                <ul class='card-meta-tag list-inline'>
-                                  <li class='list-inline-item small'><a href='tag-single.php'>Machine</a></li>
-                                </ul>
-                              </li>
+                              <div class='row'>
+                                <div class='col-7'>
+                                  <li class='list-inline-item mt-2'>
+                                    <a href='../author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $blog[blog_creator_id]'>
+                                      <img class='w-auto' src='../assets/images/uploaded_authors/$author_img' alt='$blog[blog_creator_id]' width='26' height='26'> by <span>$author_first_name</span>
+                                    </a>
+                                  </li>
+                                  <li class='list-inline-item mt-2'>•</li>
+                                  <li class='list-inline-item mt-2'>
+                                    <ul class='card-meta-tag list-inline'>
+                                      <li class='list-inline-item small'><a href='tag-single.php'>Machine</a></li>
+                                    </ul>
+                                  </li>
+                                </div>
+                                <div class='col-5 text-end'>
+                                  <li class='list-inline-item mt-2'>
+                                    <ul class='card-meta-tag list-inline'>
+                                      <li class='list-inline-item medium'><a href='edit_blog.php?blog_id=$blog[blog_id]'><i class='fas fa-edit'></i> Edit</a></li>
+                                      <li class='list-inline-item medium'><a href='delete_blog.php?blog_id=$blog[blog_id]'><i class='fa fa-trash'></i> Delete</a></li>
+                                    </ul>
+                                  </li>
+                                </div>
+                              </div>
                             </ul>
                           </div>
                         </article>
@@ -331,23 +343,8 @@
 <footer>
   <div class="container">
     <div class="section">
-      <div class="row justify-content-center align-items-center">
-        <div class="col-xl-6 col-lg-8 col-md-10">
-          <!-- newsletter block -->
-          <div class="newsletter-block">
-            <h2 class="section-title text-center mb-4">Get latest posts delivered right to your inbox</h2>
-            <form action="#!" method="post" novalidate>
-              <div class="input-group flex-column flex-sm-row flex-nowrap flex-sm-nowrap">
-                <input type="email" name="email" class="form-control required email w-auto text-center text-sm-start" placeholder="Your email address" aria-label="Subscription" required>
-                <div class="input-group-append d-flex d-sm-inline-block mt-2 mt-sm-0 ms-0 w-auto">
-                  <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="input-group-text w-100 justify-content-center" aria-label="Subscription Button"><i class="ti ti-user-plus me-2"></i> Join today</button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <!-- newsletter block -->
-        </div>
-      </div>
+      
+     
     </div>
     <div class="pb-5">
       <div class="row g-2 g-lg-4 align-items-center">
@@ -370,6 +367,9 @@
 <script src="../plugins/jquery/jquery.min.js"></script>
 <script src="../plugins/bootstrap/bootstrap.min.js"></script>
 <script src="../plugins/lightense/lightense.min.js"></script>
+
+<!-- Fontawesome -->
+<script src="https://kit.fontawesome.com/58fb59c662.js" crossorigin="anonymous"></script>
 
 <!-- Main Script -->
 <script src="../assets/js/script.js"></script>
