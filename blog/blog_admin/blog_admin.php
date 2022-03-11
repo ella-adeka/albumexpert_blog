@@ -1,14 +1,10 @@
 <?php
+
     require_once "../includes/database.php";
     $creator_query = "SELECT * from blog_creators";
     $result = mysqli_query($conn, $creator_query);
     $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    // Activate and deactivate
-
-    // Delete
-
-    
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -171,6 +167,14 @@
   </div>
 </section>
 
+<p> 
+  <?php
+      if (!empty($login_err)) {
+          echo '<div class="alert alert-danger">'.$login_err.'</div>';
+      }
+  ?>
+</p>
+
 <section class='page-header mt-3'>
   <div class="container">
     <div class="row gy-5 justify-content-center">
@@ -181,8 +185,9 @@
               <thead class='thead-dark'>
                   <tr>
                       <th scope='col'>S/N</th>
+                      <th scope='col'>Username</th>
                       <th scope='col'>Creator Name</th>
-                      <th scope='col'>Creator Username</th>
+                      <th scope='col'>Register Date</th>
                       <th scope='col'>Activate/Deactivate</th>
                       <th scope='col'>Delete</th>
                   </tr>
@@ -191,17 +196,18 @@
           ");
                   
           $creator = 1;
-          $isActive = true;
           foreach ($blog_creators as $blog_creator) {
             $full_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
-            $ActiveOrNot = ((!$isActive) ? "<i class='fa-solid fa-xmark icon'></i>" : "<i class='fa-solid fa-check icon'></i>");
+            $isActive = $blog_creator['active_or_inactive'];
+            $ActiveOrNot = (($isActive == 0) ? "<i class='fa-solid fa-xmark icon'></i>" : "<i class='fa-solid fa-check icon'></i>");
 
             echo("
               <tr>
                 <th scope='row'>".$creator++."</th>
-                <td>$blog_creator[first_name]</td>
+                <td>$blog_creator[username]</td>
                 <td>$full_name</td>
-                <td class='tickBtn'>$ActiveOrNot</td>
+                <td>$blog_creator[time_created]</td>
+                <td class='tickBtn'><a class='activeState' href='activate_or_deactivate_creator.php?creator_id=$blog_creator[creator_id]'>$ActiveOrNot</a></td>
                 <td><a class='delete' href='delete_creator.php?creator_id=$blog_creator[creator_id]'><i class='fa-solid fa-trash'></i></a></td>
               </tr>
             ");
@@ -222,9 +228,7 @@
                 </div>
               </div>
             ");
-        }
-        
-            
+        }   
       ?>
     </div>
   </div>
