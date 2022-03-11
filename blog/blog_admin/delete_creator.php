@@ -1,12 +1,18 @@
 <?php
-    include "../includes/database.php";
 
-    // $creator_query = "SELECT * from blog_creators";
-    // $result = mysqli_query($conn, $creator_query);
-    // $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    // Initialize the session
+    session_start();
+
+    include "../includes/database.php";
 
     if (isset($_GET['creator_id'])) {
         $creator_id = $_GET['creator_id'];
+        
+        // Remove all the session variables;
+        session_unset();
+
+        // Destroy the session
+        session_destroy();
         $del_creator = "DELETE FROM blog_creators WHERE creator_id = $creator_id";
         $del_result = mysqli_query($conn, $del_creator);
     }
