@@ -173,7 +173,7 @@
       <?php
         
         $author_full_name = $row['first_name']. " ".$row['last_name'];
-        $the_count = (($blog_count == 0) ? "no" : $blog_count);
+        $the_count = (($blog_count === 0) ? "no" : $blog_count);
 
         echo("
             <div class='col-lg-10'>
