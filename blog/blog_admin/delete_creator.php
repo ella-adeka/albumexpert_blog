@@ -13,6 +13,8 @@
 
         // Destroy the session
         session_destroy();
+        $del_blog_related_to_creator = "DELETE FROM blogs WHERE blog_creator_id = $creator_id";
+        $result = mysqli_query($conn, $del_blog_related_to_creator);
         $del_creator = "DELETE FROM blog_creators WHERE creator_id = $creator_id";
         $del_result = mysqli_query($conn, $del_creator);
     }
