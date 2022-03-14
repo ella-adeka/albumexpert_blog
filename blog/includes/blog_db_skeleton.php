@@ -1,5 +1,5 @@
 <?php
-    $sql = "SELECT * from blogs";
+    $sql = "SELECT * from blogs ORDER BY blog_content DESC";
     $result = mysqli_query($conn, $sql);
     $blogs = mysqli_fetch_all($result, MYSQLI_ASSOC);
     // $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
