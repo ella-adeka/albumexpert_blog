@@ -10,6 +10,7 @@
 
   // Add database file
   require_once '../includes/database.php';
+  
 
   // Blog Creators query
   $creator_query = "SELECT * from blog_creators";
@@ -27,7 +28,21 @@
     }
   }
 
+  if (isset($_GET['blog_id'])) {
+    $blog_id= $_GET['blog_id'];
+    $sql = "SELECT * FROM blogs WHERE blog_id = $blog_id";
+    $res = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($res);
+    
+  }
+
+  $newData = unserialize($row['blog_content']);
+
+
   // Initialize variables
+  // $title = $newData['title'];
+  // $description = $newData['description'];
+  // $blog_image = $newData['blogImage'];
   $title = $description = $blog_image = "";
   $title_err = $description_err = $blog_image_err = "";
 
@@ -49,7 +64,7 @@
     }
 
     // Validate image
-    if (isset($_FILES["blog_image"])) {
+    if (isset($_FILES["blog_image"]) && empty($newData['blogImage'])) {
       $blog_img_name = $_FILES['blog_image']['name'];
       $blog_img_tmp_name = $_FILES['blog_image']['tmp_name'];
       $img_extension = pathinfo($blog_img_name, PATHINFO_EXTENSION);
@@ -62,24 +77,39 @@
         move_uploaded_file($blog_img_tmp_name, $file_path);
       } else {
         $blog_image_err = "Please upload an image in either .png, .gif, .jpg, or .jpeg";
-      }
-      
+      } 
+    } elseif (isset($_FILES["blog_image"]) && !empty($newData['blogImage'])) {
+      $blog_img_name = $_FILES['blog_image']['name'];
+      $blog_img_tmp_name = $_FILES['blog_image']['tmp_name'];
+      $img_extension = pathinfo($blog_img_name, PATHINFO_EXTENSION);
+      $img_extension_lowercase = strtolower($img_extension);
+
+      $allowed_extensions = array("gif", "png", "jpg", "jpeg");
+      if (in_array($img_extension_lowercase, $allowed_extensions)) {
+        $blog_image = uniqid("IMG-", true).'.'.$img_extension_lowercase;
+        $file_path = '../assets/images/blog_images/'.$blog_image;
+        move_uploaded_file($blog_img_tmp_name, $file_path);
+        unlink("../assets/images/blog_images/".$newData['blogImage']."");
+      } elseif(!empty($newData['blogImage'])) {
+        $blog_image = $newData['blogImage'];
+      } else {
+        $blog_image_err = "Please upload an image in either .png, .gif, .jpg, or .jpeg";
+      } 
     } else {
       $blog_image_err = "Please upload a photo";
     }
+
+    
     
     // Check input erors brfore inserting into the database
     if (empty($title_err) && empty($description_err) && empty($blog_image_err)) {
 
-      // $date = date("Y-m-d");
-      $time = date("Y-m-d");
       $article = array('title'=> $title, 'description'=>$description, 'blogImage'=>$blog_image);
-      // if (is_array($article)) {
       $data = serialize($article);
+      $blog_id= $_GET['blog_id'];
         
       // Insert serialize data into row
-      $sql = "INSERT INTO blogs (blog_creator_id, time_created, blog_content) VALUES ($creator_id, '$time', ?)";
-      
+      $sql = "UPDATE blogs SET blog_content = ? WHERE blog_id=$blog_id";
 
       if ($stmt = mysqli_prepare($conn, $sql)) {
         
@@ -90,8 +120,9 @@
 
         // Attempt to execute the prepared statement
         if (mysqli_stmt_execute($stmt)) {
-          // Redirect to blog page
-          header("location: ../blog.php");
+          // Redirect to blog creator page
+          header("location: blog_creator.php");
+          
         } else {
           echo ("Something went wong. Please try again later.");
         }
@@ -102,8 +133,6 @@
     }
     
   }
-
-  
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -272,6 +301,7 @@
       <div class="col-lg-4 col-md-10 ms-lg-auto me-lg-0 me-auto">
         <div class="mb-5">
           <?php
+          
             if (isset($_SESSION['username'])) {
               foreach ($blog_creators as $blog_creator) {
                 if ($_SESSION['username'] == $blog_creator['username']) {
@@ -294,19 +324,30 @@
       <div class="col-lg-8 me-lg-auto ms-lg-0 ms-auto">
         <h2 class="h3 mb-4">Edit Your Blog</h2>
 
-        <form id="create_form_blog" class="row g-4" action=<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?> method="post" enctype="multipart/form-data">
-          <div class='col-md-12'>
-            <input type='text' class='form-control' placeholder='Title' name='title' required>
-          </div>
-          <div class='col-md-12'>
-            <textarea class='form-control' placeholder='Description' rows='4' name='description' required></textarea>
-          </div>
-          <div class='col-md-12'>
-            <input type='file' name='blog_image' id='blog_image' required>
-          </div>
-          <div class='col-12'>
-            <button type='submit' class='btn btn-primary' aria-label='Post Blog'>Post <i class='ti ti-brand-telegram ms-1'></i></button>
-          </div>
+        <form id="edit_form_blog" class="row g-4" action=<?php echo htmlspecialchars($_SERVER['PHP_SELF'])."?blog_id=$row[blog_id]" ?> method="post" enctype="multipart/form-data">
+            <?php $newData = unserialize($row['blog_content']); ?>
+            
+           
+                <div class='col-md-12'>
+                  <label for='title'>Title:</label>
+                  <input type='text' class='form-control' placeholder='Title' name='title' id='title' <?php echo (!empty($title_err)) ? 'is-invalid' : '' ?> value='<?php echo $newData['title']; ?>'>
+                </div>
+                <div class='col-md-12'>
+                  <label for='description'>Description:</label>
+                  <textarea class='form-control' placeholder='Description' rows='4' name='description' <?php echo (!empty($description))  ? 'is-invalid' : '' ?>><?php echo $newData['description']; ?></textarea>
+                  <span class="invalid-feedback"><?php echo $description_err ?></span>
+                </div>
+                <div class='col-md-12'>
+                  <p>Currently: <?php echo $newData['blogImage']; ?></p>
+                  <input type='file' name='blog_image' id='blog_image' <?php echo (!empty($blog_image_err)) ? 'is-invalid' : '' ?>>
+                  <br>
+                  <span class="invalid_feedback"><?php echo $blog_image_err ?></span>
+                </div>
+                <div class='col-12'>
+                  <button type='submit' class='btn btn-primary' aria-label='Update Blog'>Update <i class='ti ti-brand-telegram ms-1'></i></button>
+                </div>
+              
+            
         </form>
       </div>
       
