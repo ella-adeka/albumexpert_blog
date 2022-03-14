@@ -192,7 +192,8 @@
       
     foreach ($blogs as $blog){
       
-      $newData = unserialize($blog['blog_content']);
+      if (isset($blog['blog_creator_id'])) {
+        $newData = unserialize($blog['blog_content']);
 
       $truncate = substr($newData['description'], 0, 255);
 
@@ -246,7 +247,10 @@
           </article>
       </div>
       ");
-      // 
+      } else {
+        echo "";
+      }
+      
     }
 
     echo("
