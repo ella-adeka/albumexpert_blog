@@ -205,7 +205,7 @@
          <div class='col-lg-10'>
             <div class='row g-4 g-lg-5 text-center text-lg-start justify-content-center justify-content-lg-start mb-4'>
                 <div class='col-lg-3 col-md-6 col-sm-6 '>
-                  <p class='text-center text-sm-start text-lg-start text-decoration-underline'><a href='blog_creator_logout.php'>Edit Your Profile</a></p>
+                  <p class='text-center text-sm-start text-lg-start text-decoration-underline'><a href='edit_profile.php?creator_id=$blog_creator[creator_id]'>Edit Your Profile</a></p>
                 </div>
                 <div class='col-lg-9 col-md-6 col-sm-6 '>
                   <p class='text-center text-sm-end text-lg-end text-decoration-underline'><a href='blog_creator_logout.php'>Logout</a></p>
@@ -271,7 +271,6 @@
                     $author_first_name = "$blog_creator[first_name]";
                     $author_img = "$blog_creator[profile_photo_thumbnail]";
 
-        
                     echo ("
                       <div class='col-lg-6'>
                         <article class='card post-card h-100 border-0 bg-transparent'>
@@ -317,7 +316,7 @@
                                   <li class='list-inline-item mt-2'>
                                     <ul class='card-meta-tag list-inline'>
                                       <li class='list-inline-item medium'><a href='edit_blog.php?blog_id=$blog[blog_id]'><i class='fas fa-edit'></i> Edit</a></li>
-                                      <li class='list-inline-item medium'><a href='delete_blog.php?blog_id=$blog[blog_id]'><i class='fa fa-trash'></i> Delete</a></li>
+                                      <li class='list-inline-item medium'><a href='delete_blog.php?blog_id=$blog[blog_id]' id='deleteBtn'><i class='fa fa-trash'></i> Delete</a></li>
                                     </ul>
                                   </li>
                                 </div>
