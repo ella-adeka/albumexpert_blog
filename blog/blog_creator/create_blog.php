@@ -92,7 +92,7 @@
         // Attempt to execute the prepared statement
         if (mysqli_stmt_execute($stmt)) {
           // Redirect to blog page
-          header("location: ../blog.php");
+          header("location: blog_creator.php");
         } else {
           echo ("Something went wong. Please try again later.");
         }
