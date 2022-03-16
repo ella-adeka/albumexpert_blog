@@ -3,7 +3,7 @@
   session_start();
 
   // If user is not logged, redirect to login page.
-  if (!isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == false) {
+  if (!isset($_SESSION['creator_loggedin']) && $_SESSION['creator_loggedin'] == false) {
     header ("location: blog_creator_login.php");
     exit;
   }  
@@ -19,7 +19,7 @@
 
   // To count the blogs created by each creator
   foreach ($blog_creators as $blog_creator) {
-    if ($_SESSION['username'] === $blog_creator['username']) {
+    if ($_SESSION['creator_username'] === $blog_creator['username']) {
       $creator_id = $blog_creator['creator_id'];
       $blog_num = "SELECT * FROM blogs WHERE blog_creator_id = $creator_id";
       if ($result_2=mysqli_query($conn, $blog_num)) {         
@@ -273,9 +273,9 @@
       <div class="col-lg-4 col-md-10 ms-lg-auto me-lg-0 me-auto">
         <div class="mb-5">
           <?php
-            if (isset($_SESSION['username'])) {
+            if (isset($_SESSION['creator_username'])) {
               foreach ($blog_creators as $blog_creator) {
-                if ($_SESSION['username'] == $blog_creator['username']) {
+                if ($_SESSION['creator_username'] == $blog_creator['username']) {
                   $creator_img = "<img class='img-fluid rounded mb-4' src='../assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='250' height='250'>";
                   $creator_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
                 }
@@ -284,7 +284,7 @@
             echo ("
               <h2 class='h3 mb-3'>Your Profile</h2>
               $creator_img
-              <p class='mb-0'>Username: <span class='fw-bold text-bold'> $_SESSION[username]</span></p>
+              <p class='mb-0'>Username: <span class='fw-bold text-bold'> $_SESSION[creator_username]</span></p>
               <p class='mb-0'>Name:<span class='fw-bold text-bold'> $creator_name </span></p>
               <p class='mb-0'>Blogs Created:<span class='fw-bold text-bold'> $blog_count </span></p>
             ");
