@@ -1,7 +1,7 @@
 <?php
   session_start();
 
-  if (!isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == false) {
+  if (!isset($_SESSION['creator_loggedin']) && $_SESSION['creator_loggedin'] == false ) {
     header ("location: blog_creator_login.php");
     exit;
   }  
@@ -13,7 +13,7 @@
   $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
   foreach ($blog_creators as $blog_creator) {
-    if ($_SESSION['username'] === $blog_creator['username']) {
+    if ($_SESSION['creator_username'] === $blog_creator['username']) {
       $creator_id = $blog_creator['creator_id'];
       $blog_num = "SELECT * FROM blogs WHERE blog_creator_id = $creator_id";
       if ($result_2=mysqli_query($conn, $blog_num)) {         
@@ -192,9 +192,9 @@
       <?php
           $the_count = (($blog_count == 0) ? "no" : $blog_count);
 
-          if (isset($_SESSION['username'])) {
+          if (isset($_SESSION['creator_username'])) {
             foreach ($blog_creators as $blog_creator) {
-              if ($_SESSION['username'] === $blog_creator['username']) {
+              if ($_SESSION['creator_username'] === $blog_creator['username']) {
                 $creator_img = "<img class='img-fluid rounded' src='../assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='300' height='300'>";
                 $creator_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
               }
@@ -216,11 +216,11 @@
                 $creator_img
               </div>
               <div class='col-lg-9 col-md-12'>
-                <h1 class='h3 text-dark mb-1'>$_SESSION[username]</h1>
+                <h1 class='h3 text-dark mb-1'>$_SESSION[creator_username]</h1>
                 <p>Full Name: <span class='fw-bold text-black'>$creator_name</span>.</p>
                 <div class='content'>
                 <p class='mb-2'>You have <span class='fw-bold text-black'>$the_count</span> Published posts.</p>
-                  <p>Write your <a target='_blank' href='create_blog.php'>blog</a>.</p>
+                  <p>Write your <a href='create_blog.php'>blog</a>.</p>
                 </div>
               </div>
             </div>
@@ -260,12 +260,12 @@
               </div>
             ");
           } else {
-            if (isset($_SESSION['username'])) {
+            if (isset($_SESSION['creator_username'])) {
               foreach ($blog_creators as $blog_creator) {
               foreach ($blogs as $blog) {
                 $newData = unserialize($blog['blog_content']);
                 $truncate = substr($newData['description'], 0, 255);
-                if ($_SESSION['username'] === $blog_creator['username'] && $blog["blog_creator_id"] === $blog_creator["creator_id"]) {
+                if ($_SESSION['creator_username'] === $blog_creator['username'] && $blog["blog_creator_id"] === $blog_creator["creator_id"]) {
                   // if () {
                     $author_name = "$blog_creator[first_name] $blog_creator[last_name]";
                     $author_first_name = "$blog_creator[first_name]";
