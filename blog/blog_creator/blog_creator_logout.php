@@ -1,14 +1,19 @@
 <?php
-    // Initialize the session
-    session_start();
 
-    // Remove all the session variables;
-    session_unset();
+    // if (isset($_SESSION['creator_id'])) {
+        // Initialize the session
+        session_start();
 
-    // Destroy the session
-    session_destroy();
+        // Remove all the session variables;
+        // session_unset();
+        unset($_SESSION["creator_loggedin"]);
 
-    // Redirect to index page
+        // Destroy the session
+        // session_destroy();
+
+        // Redirect to index page
+        
+    // }
     header('location: ../index.php');
     exit;
 ?>
