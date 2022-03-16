@@ -1,9 +1,15 @@
 <?php
+  session_start();
 
-    require_once "../includes/database.php";
-    $creator_query = "SELECT * from blog_creators";
-    $result = mysqli_query($conn, $creator_query);
-    $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
+  if (!isset($_SESSION['admin_loggedin']) && $_SESSION['admin_loggedin'] == false) {
+    header ("location: blog_admin_login.php");
+    exit;
+  }  
+   
+  require_once "../includes/database.php";
+  $creator_query = "SELECT * from blog_creators";
+  $result = mysqli_query($conn, $creator_query);
+  $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -170,13 +176,23 @@
 <p> 
   <?php
       if (!empty($login_err)) {
-          echo '<div class="alert alert-danger">'.$login_err.'</div>';
+        echo '<div class="alert alert-danger">'.$login_err.'</div>';
       }
   ?>
 </p>
 
 <section class='page-header mt-3'>
   <div class="container">
+    <div class='row g-4 g-lg-5 text-center text-lg-start justify-content-center justify-content-lg-start mb-4'>
+        <div class='col-lg-3 col-md-6 col-sm-6 '>
+          <p class='text-center text-sm-start text-lg-start fs-3'>
+            <?php echo $_SESSION['admin_username']; ?>
+          </p>
+        </div>
+        <div class='col-lg-9 col-md-6 col-sm-6 '>
+          <p class='text-center text-sm-end text-lg-end text-decoration-underline'><a href='blog_admin_logout.php'>Logout</a></p>
+        </div>
+    </div>
     <div class="row gy-5 justify-content-center">
       <?php
         if (!empty($blog_creators)) {
