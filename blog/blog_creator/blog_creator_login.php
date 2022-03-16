@@ -3,7 +3,7 @@
     session_start();
 
     // Check if the user is already logged in, if yes then redirect to the welcome page
-    if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] == true) {
+    if (isset($_SESSION["creator_loggedin"]) && $_SESSION["creator_loggedin"] == true) {
         header('Location: blog_creator.php');
         exit;
     }
@@ -61,9 +61,9 @@
                                 session_start();
 
                                 // Store data in session variables
-                                $_SESSION["loggedin"] = true;
+                                $_SESSION["creator_loggedin"] = true;
                                 $_SESSION["creator_id"] = $creator_id;
-                                $_SESSION["username"] = $username;
+                                $_SESSION["creator_username"] = $username;
                                 // $_SESSION["active_or_inactive"] = $active_or_inactive;
                                 
                                 // if ($_SESSION["active_or_inactive"] == 1) {
@@ -90,7 +90,6 @@
                     } else {
                         // Password is not valid display an error message
                         $login_err = "Invalid username or password.";
-                        echo ("<h1>$login_err</h1>");
                     }
                     
                 } else {
