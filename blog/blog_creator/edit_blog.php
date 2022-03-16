@@ -2,8 +2,8 @@
   // start a new session
   session_start();
 
-  // If user is not logged, redirect to login page.
-  if (!isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == false) {
+  // If creator is not logged, redirect to login page.
+  if (!isset($_SESSION['creator_loggedin']) && $_SESSION['creator_loggedin'] == false) {
     header ("location: blog_creator_login.php");
     exit;
   }  
@@ -19,7 +19,7 @@
 
   // To count the blogs created by each creator
   foreach ($blog_creators as $blog_creator) {
-    if ($_SESSION['username'] === $blog_creator['username']) {
+    if ($_SESSION['creator_username'] === $blog_creator['username']) {
       $creator_id = $blog_creator['creator_id'];
       $blog_num = "SELECT * FROM blogs WHERE blog_creator_id = $creator_id";
       if ($result_2=mysqli_query($conn, $blog_num)) {         
@@ -33,16 +33,13 @@
     $sql = "SELECT * FROM blogs WHERE blog_id = $blog_id";
     $res = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($res);
-    
   }
 
+  // unserialize blog_content
   $newData = unserialize($row['blog_content']);
 
 
   // Initialize variables
-  // $title = $newData['title'];
-  // $description = $newData['description'];
-  // $blog_image = $newData['blogImage'];
   $title = $description = $blog_image = "";
   $title_err = $description_err = $blog_image_err = "";
 
@@ -65,6 +62,8 @@
 
     // Validate image
     if (isset($_FILES["blog_image"]) && empty($newData['blogImage'])) {
+      // if a new blog_image is set, and there is no current blog_image
+      // set its value to $blog_image
       $blog_img_name = $_FILES['blog_image']['name'];
       $blog_img_tmp_name = $_FILES['blog_image']['tmp_name'];
       $img_extension = pathinfo($blog_img_name, PATHINFO_EXTENSION);
@@ -79,6 +78,7 @@
         $blog_image_err = "Please upload an image in either .png, .gif, .jpg, or .jpeg";
       } 
     } elseif (isset($_FILES["blog_image"]) && !empty($newData['blogImage'])) {
+      // If a new blog_image is set and there is a current blog_image,
       $blog_img_name = $_FILES['blog_image']['name'];
       $blog_img_tmp_name = $_FILES['blog_image']['tmp_name'];
       $img_extension = pathinfo($blog_img_name, PATHINFO_EXTENSION);
@@ -86,13 +86,16 @@
 
       $allowed_extensions = array("gif", "png", "jpg", "jpeg");
       if (in_array($img_extension_lowercase, $allowed_extensions)) {
+        // Update current blog_image to newly set blog_image
         $blog_image = uniqid("IMG-", true).'.'.$img_extension_lowercase;
         $file_path = '../assets/images/blog_images/'.$blog_image;
         move_uploaded_file($blog_img_tmp_name, $file_path);
         unlink("../assets/images/blog_images/".$newData['blogImage']."");
       } elseif(!empty($newData['blogImage'])) {
+        // If there is a current blog_image, set $blog_image to its value
         $blog_image = $newData['blogImage'];
       } else {
+        // If no image is set at all
         $blog_image_err = "Please upload an image in either .png, .gif, .jpg, or .jpeg";
       } 
     } else {
@@ -104,8 +107,11 @@
     // Check input erors brfore inserting into the database
     if (empty($title_err) && empty($description_err) && empty($blog_image_err)) {
 
+      // Set blog_content in an array
       $article = array('title'=> $title, 'description'=>$description, 'blogImage'=>$blog_image);
+      // Serialize the blog_content and set it to $data
       $data = serialize($article);
+      // $blog_id is necessary, beause only one blog is being updated
       $blog_id= $_GET['blog_id'];
         
       // Insert serialize data into row
@@ -301,10 +307,10 @@
       <div class="col-lg-4 col-md-10 ms-lg-auto me-lg-0 me-auto">
         <div class="mb-5">
           <?php
-          
-            if (isset($_SESSION['username'])) {
+            // If the creator_username is set in the session and equals the $blog_creator's username, display corresponding details of the blog_creator
+            if (isset($_SESSION['creator_username'])) {
               foreach ($blog_creators as $blog_creator) {
-                if ($_SESSION['username'] == $blog_creator['username']) {
+                if ($_SESSION['creator_username'] == $blog_creator['username']) {
                   $creator_img = "<img class='img-fluid rounded mb-4' src='../assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='250' height='250'>";
                   $creator_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
                 }
@@ -313,7 +319,7 @@
             echo ("
               <h2 class='h3 mb-3'>Your Profile</h2>
               $creator_img
-              <p class='mb-0'>Username: <span class='fw-bold text-bold'> $_SESSION[username]</span></p>
+              <p class='mb-0'>Username: <span class='fw-bold text-bold'> $_SESSION[creator_username]</span></p>
               <p class='mb-0'>Name:<span class='fw-bold text-bold'> $creator_name </span></p>
               <p class='mb-0'>Blogs Created:<span class='fw-bold text-bold'> $blog_count </span></p>
             ");
@@ -325,29 +331,28 @@
         <h2 class="h3 mb-4">Edit Your Blog</h2>
 
         <form id="edit_form_blog" class="row g-4" action=<?php echo htmlspecialchars($_SERVER['PHP_SELF'])."?blog_id=$row[blog_id]" ?> method="post" enctype="multipart/form-data">
-            <?php $newData = unserialize($row['blog_content']); ?>
-            
-           
-                <div class='col-md-12'>
-                  <label for='title'>Title:</label>
-                  <input type='text' class='form-control' placeholder='Title' name='title' id='title' <?php echo (!empty($title_err)) ? 'is-invalid' : '' ?> value='<?php echo $newData['title']; ?>'>
-                </div>
-                <div class='col-md-12'>
-                  <label for='description'>Description:</label>
-                  <textarea class='form-control' placeholder='Description' rows='4' name='description' <?php echo (!empty($description))  ? 'is-invalid' : '' ?>><?php echo $newData['description']; ?></textarea>
-                  <span class="invalid-feedback"><?php echo $description_err ?></span>
-                </div>
-                <div class='col-md-12'>
-                  <p>Currently: <?php echo $newData['blogImage']; ?></p>
-                  <input type='file' name='blog_image' id='blog_image' <?php echo (!empty($blog_image_err)) ? 'is-invalid' : '' ?>>
-                  <br>
-                  <span class="invalid_feedback"><?php echo $blog_image_err ?></span>
-                </div>
-                <div class='col-12'>
-                  <button type='submit' class='btn btn-primary' aria-label='Update Blog'>Update <i class='ti ti-brand-telegram ms-1'></i></button>
-                </div>
+          <!-- userialize blog_content  -->
+          <?php $newData = unserialize($row['blog_content']); ?>
+          
+          <div class='col-md-12'>
+            <label for='title'>Title:</label>
+            <input type='text' class='form-control' placeholder='Title' name='title' id='title' <?php echo (!empty($title_err)) ? 'is-invalid' : '' ?> value='<?php echo $newData['title']; ?>'>
+          </div>
+          <div class='col-md-12'>
+            <label for='description'>Description:</label>
+            <textarea class='form-control' placeholder='Description' rows='4' name='description' <?php echo (!empty($description))  ? 'is-invalid' : '' ?>><?php echo $newData['description']; ?></textarea>
+            <span class="invalid-feedback"><?php echo $description_err ?></span>
+          </div>
+          <div class='col-md-12'>
+            <p>Currently: <?php echo $newData['blogImage']; ?></p>
+            <input type='file' name='blog_image' id='blog_image' <?php echo (!empty($blog_image_err)) ? 'is-invalid' : '' ?>>
+            <br>
+            <span class="invalid_feedback"><?php echo $blog_image_err ?></span>
+          </div>
+          <div class='col-12'>
+            <button type='submit' class='btn btn-primary' aria-label='Update Blog'>Update <i class='ti ti-brand-telegram ms-1'></i></button>
+          </div>
               
-            
         </form>
       </div>
       
