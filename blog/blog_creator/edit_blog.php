@@ -35,8 +35,8 @@
     $row = mysqli_fetch_assoc($res);
   }
 
-  // unserialize blog_content
-  $newData = unserialize($row['blog_content']);
+  // json_decode blog_content
+  $newData = json_decode($row['blog_content'], true);
 
 
   // Initialize variables
@@ -87,7 +87,7 @@
       $allowed_extensions = array("gif", "png", "jpg", "jpeg");
       if (in_array($img_extension_lowercase, $allowed_extensions)) {
         // Update current blog_image to newly set blog_image
-        $blog_image = uniqid("IMG-", true).'.'.$img_extension_lowercase;
+        $blog_image = uniqid("IMG_", true).'.'.$img_extension_lowercase;
         $file_path = '../assets/images/blog_images/'.$blog_image;
         move_uploaded_file($blog_img_tmp_name, $file_path);
         unlink("../assets/images/blog_images/".$newData['blogImage']."");
@@ -110,7 +110,7 @@
       // Set blog_content in an array
       $article = array('title'=> $title, 'description'=>$description, 'blogImage'=>$blog_image);
       // Serialize the blog_content and set it to $data
-      $data = serialize($article);
+      $data = json_encode($article, JSON_FORCE_OBJECT);
       // $blog_id is necessary, beause only one blog is being updated
       $blog_id= $_GET['blog_id'];
         
@@ -332,26 +332,31 @@
 
         <form id="edit_form_blog" class="row g-4" action=<?php echo htmlspecialchars($_SERVER['PHP_SELF'])."?blog_id=$row[blog_id]" ?> method="post" enctype="multipart/form-data">
           <!-- userialize blog_content  -->
-          <?php $newData = unserialize($row['blog_content']); ?>
+          <?php 
+            $newData = json_decode($row['blog_content'], true); 
+
+            echo("
+                <div class='col-md-12'>
+                  <label for='title'>Title:</label>
+                  <input type='text' class='form-control' placeholder='Title' name='title' id='title' value='$newData[title]'>
+                </div>
+                <div class='col-md-12'>
+                  <label for='description'>Description:</label>
+                  <textarea class='form-control' placeholder='Description' rows='4' name='description'> $newData[description]</textarea>
+                  <span class='invalid-feedback'> $description_err</span>
+                </div>
+                <div class='col-md-12'>
+                  <p>Currently: $newData[blogImage]</p>
+                  <input type='file' name='blog_image' id='blog_image'>
+                  <br>
+                  <span class='invalid_feedback'> $blog_image_err</span>
+                </div>
+                <div class='col-12'>
+                  <button type='submit' class='btn btn-primary' aria-label='Update Blog'>Update <i class='ti ti-brand-telegram ms-1'></i></button>
+                </div>
+            ");
           
-          <div class='col-md-12'>
-            <label for='title'>Title:</label>
-            <input type='text' class='form-control' placeholder='Title' name='title' id='title' <?php echo (!empty($title_err)) ? 'is-invalid' : '' ?> value='<?php echo $newData['title']; ?>'>
-          </div>
-          <div class='col-md-12'>
-            <label for='description'>Description:</label>
-            <textarea class='form-control' placeholder='Description' rows='4' name='description' <?php echo (!empty($description))  ? 'is-invalid' : '' ?>><?php echo $newData['description']; ?></textarea>
-            <span class="invalid-feedback"><?php echo $description_err ?></span>
-          </div>
-          <div class='col-md-12'>
-            <p>Currently: <?php echo $newData['blogImage']; ?></p>
-            <input type='file' name='blog_image' id='blog_image' <?php echo (!empty($blog_image_err)) ? 'is-invalid' : '' ?>>
-            <br>
-            <span class="invalid_feedback"><?php echo $blog_image_err ?></span>
-          </div>
-          <div class='col-12'>
-            <button type='submit' class='btn btn-primary' aria-label='Update Blog'>Update <i class='ti ti-brand-telegram ms-1'></i></button>
-          </div>
+          ?>
               
         </form>
       </div>
