@@ -2,12 +2,16 @@
   session_start();
   include('includes/database.php');
 
+  $scriptName = basename($_SERVER['PHP_SELF']);
+  
   if (isset($_GET['author_id'])) {
     $creator_id = $_GET['author_id'];
     $sql = "SELECT * FROM blog_creators WHERE creator_id = $creator_id";
     $res = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($res);
-  } 
+  } else{
+    exit('Error in '.$scriptName.'. The condition if (isset($_GET[author_id)) was not met');
+  }
   
   $creator_query = "SELECT * from blog_creators";
   $result = mysqli_query($conn, $creator_query);
@@ -219,7 +223,7 @@
       } else {
         foreach ($blogs as $blog) {
 
-          $newData = unserialize($blog['blog_content']);
+          $newData = json_decode($blog['blog_content'], true);
           $truncate = substr($newData['description'], 0, 255);
           if ($blog["blog_creator_id"] === $row["creator_id"]) {
             $author_name = "$row[first_name] $row[last_name]";
