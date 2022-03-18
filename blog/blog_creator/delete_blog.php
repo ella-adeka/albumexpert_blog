@@ -12,7 +12,7 @@
         // Because blog_content is serialized, the sql statement is needed to 
         // select the specific blog that matches the id
         // the blog_content is unserialized to single out the image.
-        $newData = unserialize($row['blog_content']);
+        $newData = json_decode($row['blog_content'], true);
         // since the image is being saved to the computer as well, it needs to be 
         // deleted spqcially
         unlink("../assets/images/blog_images/".$newData['blogImage']."");
