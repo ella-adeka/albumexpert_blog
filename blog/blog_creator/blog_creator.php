@@ -263,7 +263,7 @@
             if (isset($_SESSION['creator_username'])) {
               foreach ($blog_creators as $blog_creator) {
               foreach ($blogs as $blog) {
-                $newData = unserialize($blog['blog_content']);
+                $newData = json_decode($blog['blog_content'], true);
                 $truncate = substr($newData['description'], 0, 255);
                 if ($_SESSION['creator_username'] === $blog_creator['username'] && $blog["blog_creator_id"] === $blog_creator["creator_id"]) {
                   // if () {
