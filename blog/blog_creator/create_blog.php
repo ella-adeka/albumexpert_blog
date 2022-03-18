@@ -58,7 +58,7 @@
 
       $allowed_extensions = array("gif", "png", "jpg", "jpeg");
       if (in_array($img_extension_lowercase, $allowed_extensions)) {
-        $blog_image = uniqid("IMG-", true).'.'.$img_extension_lowercase;
+        $blog_image = uniqid("IMG_", true).'.'.$img_extension_lowercase;
         $file_path = '../assets/images/blog_images/'.$blog_image;
         move_uploaded_file($blog_img_tmp_name, $file_path);
       } else {
@@ -76,7 +76,7 @@
       $time = date("Y-m-d");
       $article = array('title'=> $title, 'description'=>$description, 'blogImage'=>$blog_image);
       // if (is_array($article)) {
-      $data = serialize($article);
+      $data = json_encode($article, JSON_FORCE_OBJECT);
         
       // Insert serialize data into row
       $sql = "INSERT INTO blogs (blog_creator_id, time_created, blog_content) VALUES ($creator_id, '$time', ?)";
