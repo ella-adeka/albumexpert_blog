@@ -1,13 +1,16 @@
 <?php 
 
-    $dbHost = "localHost";
-    $dbUser = "root";
-    $dbPass = "";
+    $dbHost = "localhost";
+    $dbUser = "AE_blog_alltablesSelInsUpdDel";
+    $dbPass = "Emmanuella@123";
     $dbName = "albumexpert_blog";
 
-    $conn = mysqli_connect($dbHost, $dbUser, $dbPass, $dbName);
+    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 
     if (!$conn) {
-        die("Database connection failed");
+        die("database connection failed");
+    }
+    else{
+        echo 'database connection successful';
     }
 ?>
