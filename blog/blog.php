@@ -193,7 +193,7 @@
     foreach ($blogs as $blog){
       
       if (isset($blog['blog_creator_id'])) {
-        $newData = unserialize($blog['blog_content']);
+        $newData = json_decode($blog['blog_content'], true);
 
       $truncate = substr($newData['description'], 0, 255);
 

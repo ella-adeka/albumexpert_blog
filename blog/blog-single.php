@@ -166,7 +166,7 @@
         <div class='row justify-content-center'>
     ");
 
-    $blog_content = unserialize($row['blog_content']);
+    $blog_content = json_decode($row['blog_content'], true);
     $author_name = "$blog_creator[first_name] $blog_creator[last_name]";
   
         echo("

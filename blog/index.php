@@ -200,7 +200,7 @@
 
 
     foreach ($blogs as $blog){
-      $newData = unserialize($blog['blog_content']);
+      $newData = json_decode($blog['blog_content'], true);
       $truncate = substr($newData['description'], 0, 255);
 
       foreach ($blog_creators as $blog_creator){
