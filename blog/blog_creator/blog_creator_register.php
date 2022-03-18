@@ -87,7 +87,7 @@
 
             $allowed_extensions = array("gif", "png", "jpg", "jpeg");
             if (in_array($img_extension_lowercase, $allowed_extensions)) {
-                $profile_photo_thumbnail = uniqid("IMG-", true).'.'.$img_extension_lowercase;
+                $profile_photo_thumbnail = uniqid("IMG_", true).'.'.$img_extension_lowercase;
                 $file_path= '../assets/images/uploaded_authors/'.$profile_photo_thumbnail;
                 move_uploaded_file($tmp_name, $file_path);
             } else {
