@@ -3,7 +3,7 @@
 echo '
 <nav class="navbar navbar-expand-lg navbar-light p-0">
           <!-- logo -->
-          <a class="navbar-brand font-weight-bold mb-0" href="index.html" title="Qurno">
+          <a class="navbar-brand font-weight-bold mb-0" href="index.php" title="Qurno">
             <img class="img-fluid" width="110" height="35" src="assets/images/logo.png" alt="Qurno">
           </a>
 
