@@ -44,7 +44,7 @@ echo '
                   <li><a class="dropdown-item" href="categories.php">Categories</a></li>
                   <li><a class="dropdown-item" href="categories-single.php">Category Single</a></li>
                   <li><a class="dropdown-item" href="404-page.php">404 Page</a></li>
-                  <li><a class="dropdown-item" href="privacy.html">Privacy</a></li>
+                  <li><a class="dropdown-item" href="privacy.php">Privacy</a></li>
                 </ul>
               </li>
             </ul>

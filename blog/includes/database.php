@@ -1,8 +1,13 @@
 <?php 
 
+    // $dbHost = "localhost";
+    // $dbUser = "AE_blog_alltablesSelInsUpdDel";
+    // $dbPass = "Emmanuella@123";
+    // $dbName = "albumexpert_blog";
+
     $dbHost = "localhost";
-    $dbUser = "AE_blog_alltablesSelInsUpdDel";
-    $dbPass = "Emmanuella@123";
+    $dbUser = "root";
+    $dbPass = "";
     $dbName = "albumexpert_blog";
 
     $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);

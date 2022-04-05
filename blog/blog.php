@@ -5,9 +5,9 @@
   $result = mysqli_query($conn, $creator_query);
   $blog_creators = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-  $tag_query = "SELECT * from blog_tags";
-  $result = mysqli_query($conn, $tag_query);
-  $blog_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
+  // $tag_query = "SELECT * from blog_tags";
+  // $result = mysqli_query($conn, $tag_query);
+  // $blog_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
  
   include('includes/blog_db_skeleton.php');
   
