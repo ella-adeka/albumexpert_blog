@@ -1,4 +1,42 @@
 <?php
+
+  function resizeImage($profile_photo_thumbnail) {
+    if (file_exists("../assets/images/uploaded_authors/$profile_photo_thumbnail")) {
+      $main_url = "https://api.skybiometry.com/fc/faces/detect.json?api_key=2mllmjo38p37oel9j0hets4oua&api_secret=pv3jnm7n0tjhh9pfb5q94nib17&urls=https://albumexpert.com/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail."&attribute=all";
+      $result = file_get_contents($main_url);
+      $result_array = json_decode($result, true);
+
+      list($width_orig, $height_orig) = getimagesize("/Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+
+      $widthOfHead = $result_array['photos'][0]['tags'][0]['width'];
+      $heightOfHead = $result_array['photos'][0]['tags'][0]['height'];
+
+      $face = $result_array['photos'][0]['tags'][0]['attributes']['face'];
+
+      $ratio = 250/$width_orig;
+      $width = 250;
+      $height = $height_orig * $ratio;
+      // Resample the image
+      $image_p = imagecreatetruecolor($width, $height);
+      $the_image = imagecreatefromjpeg("/Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+
+      imagecopyresampled($image_p, $the_image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+
+      $image_new = imagecreatetruecolor($width, $width);
+      imagecopyresampled($image_new, $image_p, 0, 0, 0, 0, $width, $width, $width, $width);
+      
+      $new_path = "Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail;
+      
+      // Output the image
+      // header('Content-Type: image/jpeg');
+      imagejpeg($image_new, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 100);;
+    } 
+    else {
+        echo "does not";
+    }
+  }
+
+
     // Include the database file
     require_once "../includes/database.php";
     // include("../includes/blog_db_skeleton.php");
@@ -90,6 +128,8 @@
                 $profile_photo_thumbnail = uniqid("IMG_", true).'.'.$img_extension_lowercase;
                 $file_path= '../assets/images/uploaded_authors/'.$profile_photo_thumbnail;
                 move_uploaded_file($tmp_name, $file_path);
+                resizeImage($profile_photo_thumbnail);
+                // unlink('../assets/images/uploaded_authors/'.$profile_photo_thumbnail);
             } else {
                 $profile_photo_thumbnail_err = "Please upload in either .png, .gif, .jpg, or .jpeg format.";
             }
