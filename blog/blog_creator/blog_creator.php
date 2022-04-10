@@ -82,6 +82,7 @@
   </div>
 </section> -->
 
+
 <section class='page-header section-sm'>
   <div class="container">
     <div class="row gy-5 justify-content-center">
@@ -92,7 +93,7 @@
           if (isset($_SESSION['creator_username'])) {
             foreach ($blog_creators as $blog_creator) {
               if ($_SESSION['creator_username'] === $blog_creator['username']) {
-                $creator_img = "<img class='img-fluid rounded' src='../assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='300' height='300'>";
+                $creator_img = "<img class='img-fluid rounded' src='../assets/images/cropped_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='300' height='300'>";
                 $creator_name = $blog_creator['first_name'].' '.$blog_creator['last_name'];
               }
             }

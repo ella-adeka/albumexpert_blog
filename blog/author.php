@@ -10,11 +10,8 @@
   $blogs = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
   // include('includes/blog_db_skeleton.php');
-  
- 
-  
-  
 ?>
+
 <!DOCTYPE html>
 <html lang="en-US">
 
@@ -99,7 +96,7 @@
                 echo ("
                 <div class='col-md-4 col-sm-6'>
                   <a class='d-inline-block is-hoverable' href='./author-single.php?author_id=".$blog_creator['creator_id']."'>
-                    <img class='img-fluid rounded' src='assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='150' height='150'>
+                    <img class='img-fluid rounded' src='assets/images/cropped_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name] $blog_creator[last_name]' width='150' height='150'>
                     <h4 class='text-dark mt-4 mb-1'>$author_name</h4>
                     <p class='mb-0'><span class='fw-bold text-black'>$the_count</span> Published posts</p>
                   </a>

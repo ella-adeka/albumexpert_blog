@@ -135,7 +135,7 @@
               <ul class='card-meta list-inline'>
                 <li class='list-inline-item mt-2'>
                   <a href='./author-single.php?author_id=".$blog['blog_creator_id']."' class='card-meta-author' title='Read all posts by - $author_name'>
-                    <img class='w-auto' src='assets/images/uploaded_authors/$author_img' alt='$author_name' width='26' height='26'> by <span>$author_name</span>
+                    <img class='w-auto' src='assets/images/cropped_authors/$author_img' alt='$author_name' width='26' height='26'> by <span>$author_name</span>
                   </a>
                 </li>
                 <li class='list-inline-item mt-2'>•</li>

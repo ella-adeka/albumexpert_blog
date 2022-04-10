@@ -15,7 +15,7 @@
         $res = mysqli_query($conn, $sql);
         $blog_creator = mysqli_fetch_assoc($res);
 
-        unlink("../assets/images/uploaded_authors/".$blog_creator['profile_photo_thumbnail']."");
+        unlink("../assets/images/cropped_authors/".$blog_creator['profile_photo_thumbnail']."");
         
         unset($_SESSION["creator_loggedin"]);
         // $_SESSION["creator_deleted"] = true;

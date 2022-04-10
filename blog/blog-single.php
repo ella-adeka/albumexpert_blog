@@ -74,7 +74,7 @@
               <ul class='card-meta list-inline mb-2'>
                 <li class='list-inline-item mt-2'>
                   <a href='./author-single.php?author_id=".$blog_creator['creator_id']."' class='card-meta-author' title='Read all posts by - $blog_creator[first_name]'>
-                    <img class='w-auto' src='assets/images/uploaded_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name]' width='26' height='26'> by <span>$blog_creator[first_name]</span>
+                    <img class='w-auto' src='assets/images/cropped_authors/$blog_creator[profile_photo_thumbnail]' alt='$blog_creator[first_name]' width='26' height='26'> by <span>$blog_creator[first_name]</span>
                   </a>
                 </li>
                 <li class='list-inline-item mt-2'>—</li>
