@@ -2,34 +2,71 @@
 
   function resizeImage($profile_photo_thumbnail) {
     if (file_exists("../assets/images/uploaded_authors/$profile_photo_thumbnail")) {
-      $main_url = "https://api.skybiometry.com/fc/faces/detect.json?api_key=2mllmjo38p37oel9j0hets4oua&api_secret=pv3jnm7n0tjhh9pfb5q94nib17&urls=https://albumexpert.com/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail."&attribute=all";
+      $main_url = "https://api.skybiometry.com/fc/faces/detect.json?api_key=2mllmjo38p37oel9j0hets4oua&api_secret=pv3jnm7n0tjhh9pfb5q94nib17&urls=http://albumexpert.com/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail."&attribute=all&detect_all_feature_points=true";
+      
       $result = file_get_contents($main_url);
-      $result_array = json_decode($result, true);
+      $resultJSON = json_decode($result, true);
 
       list($width_orig, $height_orig) = getimagesize("/Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
 
-      $widthOfHead = $result_array['photos'][0]['tags'][0]['width'];
-      $heightOfHead = $result_array['photos'][0]['tags'][0]['height'];
+      $img_width = $resultJSON['photos'][0]['tags'][0]['width'];
+      $img_height = $resultJSON['photos'][0]['tags'][0]['height'];
+      $detectedFaces = $resultJSON['photos'][0]['tags'];
+      $numberOfDetectedFaces = count($detectedFaces);
+
+      if ($numberOfDetectedFaces > 0) {
+        for ($i=0; $i < $numberOfDetectedFaces; $i++) { 
+          $indexFaceTag = $detectedFaces[$i];
+          $indexFacePoints = $indexFaceTag['points'];
+        }
+      }
+
+      foreach ($detectedFaces as $key => $detectedFaceTag) {
+        $all_x_coordinates = array();
+        $all_y_coordinates = array();
+        
+        $detectedFacePoints = $detectedFaceTag['points'];
+
+        foreach ($detectedFacePoints as $key2 => $indexPoint) {
+          $all_x_coordinates[] = $indexPoint['x'];
+          $all_y_coordinates[] = $indexPoint['y'];
+        }
+      }
+
+      sort($all_x_coordinates);
+      sort($all_y_coordinates);
+
+      $init_All_X = (count($all_x_coordinates) - 1);
+      $init_All_Y = (count($all_y_coordinates) - 1);
+      $faceWidth = $all_x_coordinates[$init_All_X];
+      $faceHeight = $all_y_coordinates[$init_All_Y];
+      
+      $faceWidthInPixels = ($faceWidth/100)*$width_orig;
+      $faceHeightInPixels = ($faceHeight/100)*$height_orig;
+
+      // $widthOfHead = $result_array['photos'][0]['tags'][0]['width'];
+      // $heightOfHead = $result_array['photos'][0]['tags'][0]['height'];
 
       $face = $result_array['photos'][0]['tags'][0]['attributes']['face'];
 
-      $ratio = 250/$width_orig;
-      $width = 250;
+      $ratio = 150/$width_orig;
+      $width = 150;
       $height = $height_orig * $ratio;
+      
       // Resample the image
-      $image_p = imagecreatetruecolor($width, $height);
+      $image_p = imagecreatetruecolor($faceWidth, $faceHeight);
       $the_image = imagecreatefromjpeg("/Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
 
-      imagecopyresampled($image_p, $the_image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+      imagecopyresampled($image_p, $the_image,0, 0,$all_x_coordinates[0], $all_y_coordinates[0],imagesx($image_p), imagesy($image_p), $faceWidthInPixels, $faceHeightInPixels);
 
-      $image_new = imagecreatetruecolor($width, $width);
-      imagecopyresampled($image_new, $image_p, 0, 0, 0, 0, $width, $width, $width, $width);
+      $image_new = imagecreatetruecolor($faceWidth, $faceHeight);
+      imagecopyresampled($image_new, $image_p, 0, 0, 0, 0, $faceWidth, $faceHeight, imagesx($image_new), imagesy($image_new));  
       
       $new_path = "Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail;
       
       // Output the image
       // header('Content-Type: image/jpeg');
-      imagejpeg($image_new, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 100);;
+      imagejpeg($image_p, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 100);;
     } 
     else {
         echo "does not";
