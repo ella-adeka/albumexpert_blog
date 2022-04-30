@@ -81,7 +81,7 @@
             <div class='col-lg-10'>
             <div class='row g-4 g-lg-5 text-center text-lg-start justify-content-center justify-content-lg-start'>
               <div class='col-lg-3 col-md-4 col-sm-5 col-6'>
-                <img class='img-fluid rounded' src='assets/images/cropped_authors/$row[profile_photo_thumbnail]' alt=$author_full_name width='250' height='250'>
+                <img class='img-fluid rounded' src='assets/images/cropped_authors/$row[profile_photo_thumbnail]' alt=$author_full_name width='250' height='250' object-fit='fill'>
               </div>
               <div class='col-lg-9 col-md-12'>
                 <p class='mb-2'><span class='fw-bold text-black'>$the_count</span> Published posts</p>
