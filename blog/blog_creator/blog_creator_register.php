@@ -7,7 +7,7 @@
       $result = file_get_contents($main_url);
       $resultJSON = json_decode($result, true);
 
-      list($width_orig, $height_orig) = getimagesize("/Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+      list($width_orig, $height_orig, $type) = getimagesize("/home/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
 
       $img_width = $resultJSON['photos'][0]['tags'][0]['width'];
       $img_height = $resultJSON['photos'][0]['tags'][0]['height'];
@@ -38,11 +38,15 @@
 
       $init_All_X = (count($all_x_coordinates) - 1);
       $init_All_Y = (count($all_y_coordinates) - 1);
-      $faceWidth = $all_x_coordinates[$init_All_X];
-      $faceHeight = $all_y_coordinates[$init_All_Y];
+
+      $origFaceWidth = $all_x_coordinates[$init_All_X] ;
+      $origFaceHeight = $all_y_coordinates[$init_All_Y];
       
-      $faceWidthInPixels = ($faceWidth/100)*$width_orig;
-      $faceHeightInPixels = ($faceHeight/100)*$height_orig;
+      $faceWidth = $all_x_coordinates[$init_All_X] * 10;
+      $faceHeight = $all_y_coordinates[$init_All_Y] *10;
+      
+      $faceWidthInPixels = ($origFaceWidth/100)*$width_orig;
+      $faceHeightInPixels = ($origFaceHeight/100)*$height_orig;
 
       // $widthOfHead = $result_array['photos'][0]['tags'][0]['width'];
       // $heightOfHead = $result_array['photos'][0]['tags'][0]['height'];
@@ -53,20 +57,54 @@
       $width = 150;
       $height = $height_orig * $ratio;
       
+      $dividendWidth = $faceWidth/$faceHeight;
       // Resample the image
-      $image_p = imagecreatetruecolor($faceWidth, $faceHeight);
-      $the_image = imagecreatefromjpeg("/Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+      // if ($dividendWidth > 1) {
+        // $faceHeightInPixels = $faceHeightInPixels/2;
+        $newfaceWidth = $faceWidth/2;
+        $newfaceWidthInPixels = $faceWidthInPixels/2;
+        echo "<br> newfaceWidthInPixels: ".$newfaceWidthInPixels;
+        echo "<br> vshhs: ".count($all_x_coordinates);
+        $image_p = imagecreatetruecolor($width, $height);
+        if ($type == 1) {
+            $the_image = imagecreatefromgif("/home/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+        } elseif ($type == 2) {
+            $the_image = imagecreatefromjpeg("/home/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+        } elseif ($type == 3) {
+            $the_image = imagecreatefrompng("/home/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+        }
 
-      imagecopyresampled($image_p, $the_image,0, 0,$all_x_coordinates[0], $all_y_coordinates[0],imagesx($image_p), imagesy($image_p), $faceWidthInPixels, $faceHeightInPixels);
+        imagecopyresampled($image_p, $the_image,0, 0,$all_x_coordinates[0], $all_y_coordinates[0], imagesx($image_p), imagesy($image_p), $faceWidthInPixels, $faceHeightInPixels);
+        
+      // } else{
+      //   $image_p = imagecreatetruecolor($width, $height);
+      //   if ($type == 1) {
+      //       $the_image = imagecreatefromgif("/home/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+      //   } elseif ($type == 2) {
+      //       $the_image = imagecreatefromjpeg("/home/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+      //   } elseif ($type == 3) {
+      //       $the_image = imagecreatefrompng("/home/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail);
+      //   }
+
+      //   imagecopyresampled($image_p, $the_image,0, 0, $all_x_coordinates[0], $all_y_coordinates[0],$width, $height, $faceWidth, $faceHeight);
+        
+      // }
 
       $image_new = imagecreatetruecolor($faceWidth, $faceHeight);
       imagecopyresampled($image_new, $image_p, 0, 0, 0, 0, $faceWidth, $faceHeight, imagesx($image_new), imagesy($image_new));  
       
-      $new_path = "Applications/xampp/htdocs/myworks/albumexpert/public_html/blog/assets/images/uploaded_authors/".$profile_photo_thumbnail;
-      
+     
       // Output the image
       // header('Content-Type: image/jpeg');
-      imagejpeg($image_p, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 100);;
+      // imagejpeg($image_p, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 100);
+
+      if ($type == 1) {
+        imagegif($image_p, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 100);
+      } elseif ($type == 2) {
+        imagejpeg($image_p, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 100);
+      } elseif ($type == 3) {
+        imagepng($image_p, "../assets/images/cropped_authors/".$profile_photo_thumbnail, 8);
+      }
     } 
     else {
         echo "does not";
@@ -166,7 +204,7 @@
                 $file_path= '../assets/images/uploaded_authors/'.$profile_photo_thumbnail;
                 move_uploaded_file($tmp_name, $file_path);
                 resizeImage($profile_photo_thumbnail);
-                // unlink('../assets/images/uploaded_authors/'.$profile_photo_thumbnail);
+                unlink('../assets/images/uploaded_authors/'.$profile_photo_thumbnail);
             } else {
                 $profile_photo_thumbnail_err = "Please upload in either .png, .gif, .jpg, or .jpeg format.";
             }
